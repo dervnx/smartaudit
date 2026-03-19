@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智核 SmartAudit - 原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .rule-group { border-left: 3px solid #3B82F6; }
+        .rule-item { border-left: 2px dashed #94A3B8; }
+        .hit { background-color: #D1FAE5; border-color: #10B981; }
+        .miss { background-color: #FEE2E2; border-color: #EF4444; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="font-bold text-xl text-gray-800">智核 SmartAudit</span>
+                    </div>
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-4">
+                        <a href="#" class="nav-tab px-3 py-2 rounded-md text-sm font-medium text-primary bg-blue-50">规则配置</a>
+                        <a href="#" class="nav-tab px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">规则执行</a>
+                        <a href="#" class="nav-tab px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">执行记录</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </button>
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm font-medium text-gray-700">A</div>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端导航 -->
+        <div class="sm:hidden border-t border-gray-200 px-4 py-2 flex space-x-4 overflow-x-auto">
+            <a href="#" class="px-3 py-1 rounded text-sm font-medium text-primary bg-blue-50 whitespace-nowrap">规则配置</a>
+            <a href="#" class="px-3 py-1 rounded text-sm font-medium text-gray-600 whitespace-nowrap">规则执行</a>
+            <a href="#" class="px-3 py-1 rounded text-sm font-medium text-gray-600 whitespace-nowrap">执行记录</a>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- 页面标题 -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">规则引擎配置</h1>
+            <p class="mt-1 text-sm text-gray-600">配置审计规则及条件，支持多规则、多条件组组合</p>
+        </div>
+
+        <!-- 规则卡片列表 -->
+        <div class="space-y-4" id="rulesContainer">
+            <!-- 规则卡片 1 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden rule-card" data-rule-id="1">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">新生入学资格审计</h3>
+                            <p class="text-xs text-gray-500">规则ID: R001 · 最后更新: 2026-03-20</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">启用</span>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" onclick="editRule(1)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" onclick="deleteRule(1)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- 条件组 -->
+                    <div class="space-y-4">
+                        <!-- 条件组 A -->
+                        <div class="rule-group bg-blue-50 rounded-lg p-4 ml-2" data-group-id="A">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">组 A</span>
+                                    <span class="text-sm text-gray-600">匹配逻辑:</span>
+                                    <select class="text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                                        <option value="all">全部满足</option>
+                                        <option value="any">任一满足</option>
+                                    </select>
+                                </div>
+                                <button class="text-gray-400 hover:text-red-500" onclick="deleteGroup('A')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <!-- 条件项 -->
+                                <div class="rule-item bg-white rounded-lg p-3 flex items-center gap-3" data-item-id="1">
+                                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+                                        <div class="sm:col-span-1">
+                                            <label class="text-xs text-gray-500 block mb-1">字段</label>
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="score" selected>高考成绩</option>
+                                                <option value="province">省份</option>
+                                                <option value="city">城市</option>
+                                                <option value="major">专业</option>
+                                                <option value="school">学校</option>
+                                                <option value="tag">标签</option>
+                                            </select>
+                                        </div>
+                                        <div class="sm:col-span-1">
+                                            <label class="text-xs text-gray-500 block mb-1">运算符</label>
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="gte">≥ 大于等于</option>
+                                                <option value="lte">≤ 小于等于</option>
+                                                <option value="eq">= 等于</option>
+                                                <option value="gt">> 大于</option>
+                                                <option value="lt">< 小于</option>
+                                            </select>
+                                        </div>
+                                        <div class="sm:col-span-1">
+                                            <label class="text-xs text-gray-500 block mb-1">值</label>
+                                            <input type="number" value="450" class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2">
+                                        </div>
+                                        <div class="sm:col-span-1">
+                                            <label class="text-xs text-gray-500 block mb-1">单位</label>
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="score">分</option>
+                                                <option value="percent">%</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg" onclick="deleteItem(1)">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- 条件项 2 -->
+                                <div class="rule-item bg-white rounded-lg p-3 flex items-center gap-3" data-item-id="2">
+                                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+                                        <div class="sm:col-span-1">
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="province" selected>省份</option>
+                                                <option value="score">高考成绩</option>
+                                                <option value="city">城市</option>
+                                                <option value="major">专业</option>
+                                                <option value="school">学校</option>
+                                                <option value="tag">标签</option>
+                                            </select>
+                                        </div>
+                                        <div class="sm:col-span-1">
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="in">包含</option>
+                                                <option value="eq" selected>= 等于</option>
+                                                <option value="not">不等于</option>
+                                            </select>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                <option value="bj">北京</option>
+                                                <option value="sh">上海</option>
+                                                <option value="gd" selected>广东</option>
+                                                <option value="zj">浙江</option>
+                                                <option value="js">江苏</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg" onclick="deleteItem(2)">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- 子组 B -->
+                                <div class="rule-group bg-purple-50 rounded-lg p-4 ml-4 mt-3" data-group-id="B">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-0.5 bg-purple-500 text-white text-xs font-medium rounded">组 B</span>
+                                            <span class="text-sm text-gray-600">匹配逻辑:</span>
+                                            <select class="text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                                                <option value="all" selected>全部满足</option>
+                                                <option value="any">任一满足</option>
+                                            </select>
+                                        </div>
+                                        <button class="text-gray-400 hover:text-red-500" onclick="deleteGroup('B')">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="rule-item bg-white rounded-lg p-3 flex items-center gap-3" data-item-id="3">
+                                            <div class="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+                                                <div class="sm:col-span-1">
+                                                    <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                        <option value="major" selected>专业</option>
+                                                        <option value="score">高考成绩</option>
+                                                        <option value="province">省份</option>
+                                                        <option value="school">学校</option>
+                                                        <option value="tag">标签</option>
+                                                    </select>
+                                                </div>
+                                                <div class="sm:col-span-1">
+                                                    <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                        <option value="in" selected>包含</option>
+                                                        <option value="eq">= 等于</option>
+                                                    </select>
+                                                </div>
+                                                <div class="sm:col-span-2">
+                                                    <select class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                                                        <option value="cs">计算机科学与技术</option>
+                                                        <option value="ai" selected>人工智能</option>
+                                                        <option value="software">软件工程</option>
+                                                        <option value="data">数据科学</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg" onclick="deleteItem(3)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 添加按钮 -->
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-2" onclick="addCondition()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            添加条件
+                        </button>
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-2" onclick="addGroup()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                            </svg>
+                            添加条件组
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 规则卡片 2 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden rule-card" data-rule-id="2">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-warning rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">毕业资格审核</h3>
+                            <p class="text-xs text-gray-500">规则ID: R002 · 最后更新: 2026-03-19</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">草稿</span>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" onclick="editRule(2)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" onclick="deleteRule(2)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="rule-group bg-blue-50 rounded-lg p-4 ml-2">
+                        <div class="text-sm text-gray-500 italic">点击编辑查看规则详情...</div>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-2" onclick="editRule(2)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            编辑规则
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新建规则按钮 -->
+        <div class="mt-6">
+            <button class="w-full sm:w-auto px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-blue-600 flex items-center justify-center gap-2 shadow-sm" onclick="openCreateModal()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                新建规则
+            </button>
+        </div>
+    </main>
+
+    <!-- 规则执行结果页面（可切换显示） -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden" id="executionPage">
+        <!-- 页面标题 -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">规则执行结果</h1>
+            <p class="mt-1 text-sm text-gray-600">查看规则执行详情及匹配结果</p>
+        </div>
+
+        <!-- 执行概要 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="text-4xl font-bold text-gray-900">85<span class="text-lg text-gray-500">/100</span></div>
+                    <div>
+                        <div class="text-sm text-gray-600">通过率</div>
+                        <div class="text-xs text-gray-400">共 120 条记录</div>
+                    </div>
+                </div>
+                <button class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="reExecuteRules()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    重新执行
+                </button>
+            </div>
+        </div>
+
+        <!-- 数据列表 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h2 class="font-semibold text-gray-900">执行记录列表</h2>
+                <div class="flex items-center gap-2">
+                    <select class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                        <option value="">全部状态</option>
+                        <option value="pass">通过</option>
+                        <option value="fail">未通过</option>
+                    </select>
+                    <select class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                        <option value="">全部规则</option>
+                        <option value="R001">新生入学资格审计</option>
+                        <option value="R002">毕业资格审核</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 列表项 -->
+            <div class="divide-y divide-gray-200" id="resultList">
+                <!-- 展开的详情 -->
+                <div class="result-item expanded" data-id="1">
+                    <div class="px-6 py-4 cursor-pointer hover:bg-gray-50" onclick="toggleDetail(1)">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                            <!-- 入参数据 -->
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-4 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">学号:</span>
+                                        <span class="font-medium text-gray-900">2026001234</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">姓名:</span>
+                                        <span class="font-medium text-gray-900">张明</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">高考成绩:</span>
+                                        <span class="font-medium text-gray-900">568 分</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">省份:</span>
+                                        <span class="font-medium text-gray-900">广东</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">专业:</span>
+                                        <span class="font-medium text-gray-900">人工智能</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 结论 -->
+                            <div class="flex items-center gap-3">
+                                <div class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span class="font-medium">通过</span>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400 transform transition-transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 详情展开区域 -->
+                    <div class="detail-content px-6 pb-6 hidden">
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">规则匹配详情</h4>
+                            <!-- 组 A -->
+                            <div class="mb-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">组 A</span>
+                                    <span class="text-sm text-gray-600">全部满足</span>
+                                    <div class="ml-auto flex items-center gap-1 text-green-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <span class="text-sm font-medium">命中</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 ml-4">
+                                    <!-- 条件项 -->
+                                    <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-green-200 hit">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm text-gray-900">高考成绩 ≥ 450 分</span>
+                                        </div>
+                                        <div class="ml-auto text-sm">
+                                            <span class="text-green-600 font-medium">实际: 568 分</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-green-200 hit">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm text-gray-900">省份 = 广东</span>
+                                        </div>
+                                        <div class="ml-auto text-sm">
+                                            <span class="text-green-600 font-medium">命中</span>
+                                        </div>
+                                    </div>
+                                    <!-- 子组 B -->
+                                    <div class="ml-4 mt-3">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="px-2 py-0.5 bg-purple-500 text-white text-xs font-medium rounded">组 B</span>
+                                            <span class="text-sm text-gray-600">全部满足</span>
+                                            <div class="ml-auto flex items-center gap-1 text-green-600">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                <span class="text-sm font-medium">命中</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-3 bg-white rounded-lg border border-green-200 hit">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-sm text-gray-900">专业 包含 [人工智能, 软件工程]</span>
+                                            </div>
+                                            <div class="mt-2 ml-8 text-sm text-green-600 font-medium">实际: 人工智能</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 执行结论 -->
+                            <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="font-semibold text-green-700">执行结论: 通过</span>
+                                </div>
+                                <p class="text-sm text-green-600">该学生符合新生入学资格审计规则，所有条件均已满足。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 未通过的记录 -->
+                <div class="result-item" data-id="2">
+                    <div class="px-6 py-4 cursor-pointer hover:bg-gray-50" onclick="toggleDetail(2)">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-4 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">学号:</span>
+                                        <span class="font-medium text-gray-900">2026005678</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">姓名:</span>
+                                        <span class="font-medium text-gray-900">李华</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">高考成绩:</span>
+                                        <span class="font-medium text-gray-900">420 分</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">省份:</span>
+                                        <span class="font-medium text-gray-900">北京</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">专业:</span>
+                                        <span class="font-medium text-gray-900">计算机科学与技术</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    <span class="font-medium">未通过</span>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400 transform transition-transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-content px-6 pb-6 hidden">
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">规则匹配详情</h4>
+                            <div class="mb-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">组 A</span>
+                                    <div class="ml-auto flex items-center gap-1 text-red-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                        <span class="text-sm font-medium">未命中</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 ml-4">
+                                    <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-red-200 miss">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm text-gray-900">高考成绩 ≥ 450 分</span>
+                                        </div>
+                                        <div class="ml-auto text-sm">
+                                            <span class="text-red-600 font-medium">实际: 420 分</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-green-200 hit">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm text-gray-900">省份 = 广东</span>
+                                        </div>
+                                        <div class="ml-auto text-sm">
+                                            <span class="text-red-600 font-medium">实际: 北京</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="font-semibold text-red-700">执行结论: 未通过</span>
+                                </div>
+                                <p class="text-sm text-red-600 mb-2">未通过原因: 高考成绩未达到最低要求（420 &lt; 450）</p>
+                                <p class="text-sm text-red-600">建议处理: 请核实该学生的高考成绩信息，如成绩无误则不符合录取条件。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三条记录 -->
+                <div class="result-item" data-id="3">
+                    <div class="px-6 py-4 cursor-pointer hover:bg-gray-50" onclick="toggleDetail(3)">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-4 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">学号:</span>
+                                        <span class="font-medium text-gray-900">2026009012</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">姓名:</span>
+                                        <span class="font-medium text-gray-900">王芳</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">高考成绩:</span>
+                                        <span class="font-medium text-gray-900">592 分</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">省份:</span>
+                                        <span class="font-medium text-gray-900">浙江</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-500">专业:</span>
+                                        <span class="font-medium text-gray-900">软件工程</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span class="font-medium">通过</span>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400 transform transition-transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-content px-6 pb-6 hidden">
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">规则匹配详情</h4>
+                            <div class="text-sm text-gray-600 italic">详情内容与上述示例结构相同...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分页 -->
+            <div class="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="text-sm text-gray-500">显示 1-3 条，共 120 条</div>
+                <div class="flex items-center gap-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>上一页</button>
+                    <button class="px-3 py-1 bg-primary text-white rounded-lg text-sm">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">2</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">3</button>
+                    <span class="px-2 text-gray-400">...</span>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">40</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">下一页</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新建/编辑规则弹窗 -->
+    <div class="fixed inset-0 z-50 hidden" id="ruleModal">
+        <div class="absolute inset-0 bg-black/50" onclick="closeModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold text-lg text-gray-900" id="modalTitle">新建规则</h3>
+                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" onclick="closeModal()">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">规则名称</label>
+                        <input type="text" placeholder="请输入规则名称" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" value="新生入学资格审计">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">规则描述</label>
+                        <textarea rows="3" placeholder="请输入规则描述" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none">用于审核新生的入学资格，包括高考成绩、籍贯、专业等条件</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">状态</label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="status" value="enabled" checked class="w-4 h-4 text-primary">
+                                <span class="text-sm text-gray-700">启用</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="status" value="draft" class="w-4 h-4 text-gray-400">
+                                <span class="text-sm text-gray-700">草稿</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+                <button class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100" onclick="closeModal()">取消</button>
+                <button class="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-600" onclick="saveRule()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div class="fixed inset-0 z-50 hidden" id="deleteModal">
+        <div class="absolute inset-0 bg-black/50" onclick="closeDeleteModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">确认删除</h3>
+                <p class="text-sm text-gray-600 text-center mb-6">确定要删除这条规则吗？此操作无法撤销。</p>
+                <div class="flex gap-3">
+                    <button class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100" onclick="closeDeleteModal()">取消</button>
+                    <button class="flex-1 px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700" onclick="confirmDelete()">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="fixed bottom-4 right-4 z-50 hidden" id="toast">
+        <div class="bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="toastIcon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span id="toastMessage">操作成功</span>
+        </div>
+    </div>
+
+    <script>
+        // 导航切换
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('text-primary', 'bg-blue-50');
+                    t.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('text-primary', 'bg-blue-50');
+
+                const configPage = document.querySelector('main:not(.hidden)');
+                const execPage = document.getElementById('executionPage');
+
+                if (this.textContent.includes('执行') || this.textContent.includes('记录')) {
+                    configPage.classList.add('hidden');
+                    execPage.classList.remove('hidden');
+                } else {
+                    configPage.classList.remove('hidden');
+                    execPage.classList.add('hidden');
+                }
+            });
+        });
+
+        // 展开/收起详情
+        function toggleDetail(id) {
+            const item = document.querySelector(`.result-item[data-id="${id}"]`);
+            const content = item.querySelector('.detail-content');
+            const icon = item.querySelector('.expand-icon');
+
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // 打开新建规则弹窗
+        function openCreateModal() {
+            document.getElementById('modalTitle').textContent = '新建规则';
+            document.getElementById('ruleModal').classList.remove('hidden');
+        }
+
+        // 编辑规则
+        function editRule(id) {
+            document.getElementById('modalTitle').textContent = '编辑规则';
+            document.getElementById('ruleModal').classList.remove('hidden');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('ruleModal').classList.add('hidden');
+        }
+
+        // 保存规则
+        function saveRule() {
+            closeModal();
+            showToast('规则保存成功');
+        }
+
+        // 删除规则
+        let deleteTarget = null;
+        function deleteRule(id) {
+            deleteTarget = { type: 'rule', id: id };
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function deleteGroup(id) {
+            deleteTarget = { type: 'group', id: id };
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function deleteItem(id) {
+            deleteTarget = { type: 'item', id: id };
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            deleteTarget = null;
+        }
+
+        function confirmDelete() {
+            closeDeleteModal();
+            showToast('删除成功');
+        }
+
+        // 添加条件和组
+        function addCondition() {
+            showToast('添加条件');
+        }
+
+        function addGroup() {
+            showToast('添加条件组');
+        }
+
+        // 重新执行
+        function reExecuteRules() {
+            showToast('正在重新执行规则...');
+        }
+
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // 页面加载时默认显示第一条的详情
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleDetail(1);
+        });
+    </script>
+</body>
+</html>
