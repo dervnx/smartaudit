@@ -1,0 +1,41 @@
+<!-- SmartAudit Axure Master: Sidebar -->
+<!-- 通用侧边栏导航 -->
+<div id="sidebar" class="axure-sidebar" style="width:220px;height:100%;background:#f8f9fa;border-right:1px solid #e0e0e0;padding:16px 0;box-sizing:border-box;">
+  <style>
+    .sidebar-menu-item { padding: 12px 20px; cursor: pointer; color: #333; font-size: 14px; display: flex; align-items: center; gap: 12px; }
+    .sidebar-menu-item:hover { background: #e8f0fe; color: #1a73e8; }
+    .sidebar-menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right: 3px solid #1a73e8; }
+    .sidebar-menu-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+    .sidebar-submenu { padding-left: 44px; }
+    .sidebar-submenu-item { padding: 10px 20px; cursor: pointer; color: #666; font-size: 13px; }
+    .sidebar-submenu-item:hover { color: #1a73e8; }
+  </style>
+
+  <!-- 菜单项 -->
+  <div class="sidebar-menu-item active">
+    <span class="icon">📊</span> 运营概览
+  </div>
+  <div class="sidebar-menu-item">
+    <span class="icon">🏢</span> 租户管理
+    <div class="sidebar-submenu">
+      <div class="sidebar-submenu-item">租户列表</div>
+      <div class="sidebar-submenu-item">开通租户</div>
+      <div class="sidebar-submenu-item">版本管理</div>
+    </div>
+  </div>
+  <div class="sidebar-menu-item">
+    <span class="icon">📋</span> 版本管理
+  </div>
+  <div class="sidebar-menu-item">
+    <span class="icon">⚙️</span> 系统配置
+  </div>
+  <div class="sidebar-menu-item">
+    <span class="icon">📈</span> 运营统计
+  </div>
+</div>
+
+<!-- Variables for Axure:
+  - sidebarWidth: 220px
+  - menuItems: Array of menu items with icons and submenus
+  - activeMenu: Currently active menu item
+-->

@@ -1,0 +1,198 @@
+<!-- SmartAudit Axure Page: 租户系统 数据备份 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据备份 - SmartAudit 租户管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    .header { height: 56px; background: #1a73e8; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .header-title { font-size: 16px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .avatar { width: 34px; height: 34px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a73e8; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 200px; background: #fff; border-right: 1px solid #e0e0e0; padding: 12px 0; overflow-y: auto; }
+    .menu-item { padding: 11px 18px; cursor: pointer; color: #444; font-size: 13px; display: flex; align-items: center; gap: 10px; border-right: 3px solid transparent; }
+    .menu-item:hover { background: #f0f7ff; color: #1a73e8; }
+    .menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right-color: #1a73e8; }
+    .content { flex: 1; padding: 22px; overflow-y: auto; background: #f5f5f5; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-secondary { background: #fff; color: #333; border: 1px solid #ddd; }
+    .btn-danger { background: #ea4335; color: #fff; }
+    .card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 18px; }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    .info-card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
+    .info-card .value { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+    .info-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+    .info-card .status { font-size: 11px; margin-top: 6px; }
+    .info-card .status.ok { color: #34a853; }
+    .info-card .status.warn { color: #f9ab00; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid #f0f0f0; }
+    th { font-size: 11px; color: #888; font-weight: 500; background: #fafafa; }
+    td { font-size: 13px; color: #333; }
+    .type-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .type-badge.auto { background: #e8f0fe; color: #1a73e8; }
+    .type-badge.manual { background: #fef7e0; color: #f9ab00; }
+    .type-badge.full { background: #e6f4ea; color: #34a853; }
+    .type-badge.incr { background: #f3e5f5; color: #7b1fa2; }
+    .action-links { display: flex; gap: 8px; }
+    .action-links a { color: #1a73e8; text-decoration: none; font-size: 12px; }
+    .schedule-row { display: flex; gap: 16px; margin-bottom: 14px; align-items: center; }
+    .schedule-row label { font-size: 12px; color: #555; width: 80px; }
+    .schedule-row input, .schedule-row select { height: 32px; border: 1px solid #ddd; border-radius: 5px; padding: 0 10px; font-size: 12px; outline: none; }
+    .schedule-row select { width: 120px; }
+    .schedule-row input { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">SmartAudit 智核审核</span>
+    </div>
+    <div class="header-right">
+      <div class="avatar">张</div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item">📁 项目管理</div>
+      <div class="menu-item">📋 任务审核</div>
+      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item">⚙️ 系统设置</div>
+      <div style="border-top:1px solid #eee;margin:8px 0;"></div>
+      <div class="menu-item">👤 账户管理</div>
+      <div class="menu-item">🔗 第三方配置</div>
+      <div class="menu-item">📋 版本信息</div>
+      <div class="menu-item active">💾 数据备份</div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1 class="page-title">数据备份</h1>
+        <button class="btn btn-primary">+ 创建备份</button>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="value">12</div>
+          <div class="label">备份文件总数</div>
+          <div class="status ok">上次备份: 2小时前</div>
+        </div>
+        <div class="info-card">
+          <div class="value">8.2 GB</div>
+          <div class="label">备份存储使用</div>
+          <div class="status warn">已用 82%</div>
+        </div>
+        <div class="info-card">
+          <div class="value">每日</div>
+          <div class="label">自动备份频率</div>
+          <div class="status ok">正常运行</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">自动备份设置</div>
+        <div class="schedule-row">
+          <label>备份类型</label>
+          <select>
+            <option selected>完整备份 + 增量备份</option>
+            <option>仅完整备份</option>
+            <option>仅增量备份</option>
+          </select>
+        </div>
+        <div class="schedule-row">
+          <label>执行时间</label>
+          <select>
+            <option>每日</option>
+            <option selected>每周</option>
+            <option>每月</option>
+          </select>
+          <select>
+            <option>周一</option>
+            <option>周二</option>
+            <option>周三</option>
+            <option>周四</option>
+            <option>周五</option>
+            <option selected>周六</option>
+            <option>周日</option>
+          </select>
+          <input type="time" value="02:00">
+        </div>
+        <div class="schedule-row">
+          <label>保留策略</label>
+          <select>
+            <option>保留最近 7 个</option>
+            <option selected>保留最近 30 个</option>
+            <option>保留最近 90 个</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px;">保存设置</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">备份历史</div>
+        <table>
+          <thead>
+            <tr>
+              <th>备份名称</th>
+              <th>类型</th>
+              <th>大小</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>backup_20240115_020000</td>
+              <td><span class="type-badge incr">增量</span></td>
+              <td>256 MB</td>
+              <td>完成</td>
+              <td>2024-01-15 02:00</td>
+              <td class="action-links">
+                <a href="#">下载</a>
+                <a href="#">恢复</a>
+                <a href="#" style="color:#ea4335;">删除</a>
+              </td>
+            </tr>
+            <tr>
+              <td>backup_20240114_020000</td>
+              <td><span class="type-badge incr">增量</span></td>
+              <td>128 MB</td>
+              <td>完成</td>
+              <td>2024-01-14 02:00</td>
+              <td class="action-links">
+                <a href="#">下载</a>
+                <a href="#">恢复</a>
+                <a href="#" style="color:#ea4335;">删除</a>
+              </td>
+            </tr>
+            <tr>
+              <td>backup_20240113_020000</td>
+              <td><span class="type-badge full">完整</span></td>
+              <td>2.1 GB</td>
+              <td>完成</td>
+              <td>2024-01-13 02:00</td>
+              <td class="action-links">
+                <a href="#">下载</a>
+                <a href="#">恢复</a>
+                <a href="#" style="color:#ea4335;">删除</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

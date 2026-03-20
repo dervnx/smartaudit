@@ -1,0 +1,76 @@
+<!-- SmartAudit Axure Page: 租户系统登录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartAudit - 智核智能审核系统登录</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; }
+    .left-panel { width: 55%; background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 60px; }
+    .left-panel h1 { font-size: 42px; margin-bottom: 16px; }
+    .left-panel p { font-size: 16px; opacity: 0.9; max-width: 380px; text-align: center; line-height: 1.6; }
+    .left-panel .tenant-badge { margin-top: 32px; padding: 8px 20px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 13px; }
+    .right-panel { width: 45%; display: flex; flex-direction: column; justify-content: center; padding: 60px; }
+    .login-box { max-width: 360px; margin: 0 auto; width: 100%; }
+    .login-box .tenant-name { font-size: 14px; color: #666; margin-bottom: 4px; }
+    .login-box h2 { font-size: 26px; color: #1a1a1a; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 14px; color: #333; margin-bottom: 6px; font-weight: 500; }
+    .form-group input { width: 100%; height: 42px; border: 1px solid #ddd; border-radius: 8px; padding: 0 14px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: #1a73e8; }
+    .captcha-row { display: flex; gap: 12px; }
+    .captcha-row input { flex: 1; }
+    .captcha-img { width: 110px; height: 42px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; flex-shrink: 0; }
+    .btn-login { width: 100%; height: 46px; background: #1a73e8; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+    .btn-login:hover { background: #1557b0; }
+    .login-options { display: flex; justify-content: space-between; margin-top: 14px; font-size: 13px; }
+    .login-options a { color: #1a73e8; text-decoration: none; }
+    .footer { position: fixed; bottom: 20px; left: 0; right: 0; text-align: center; font-size: 12px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <h1>SmartAudit</h1>
+    <p>智核智能审核系统 — 租户管理平台<br/>高效审核 · 智能规则 · 安全可靠</p>
+    <div class="tenant-badge">🏢 上海金服信息集团</div>
+  </div>
+
+  <div class="right-panel">
+    <div class="login-box">
+      <div class="tenant-name">上海金服信息集团</div>
+      <h2>用户登录</h2>
+
+      <form>
+        <div class="form-group">
+          <label>用户名 / 手机号</label>
+          <input type="text" placeholder="请输入用户名或手机号" value="zhangsan">
+        </div>
+
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" placeholder="请输入密码" value="Pass123!">
+        </div>
+
+        <div class="form-group">
+          <label>验证码</label>
+          <div class="captcha-row">
+            <input type="text" placeholder="请输入验证码" value="ABCD">
+            <div class="captcha-img">&#x7B7E;&#x540D;&#x9A23;&#x9A8B;</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login">登 录</button>
+
+        <div class="login-options">
+          <a href="#">忘记密码？</a>
+          <a href="#">联系管理员</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer">© 2024 SmartAudit 智核. 保留所有权利.</div>
+</body>
+</html>

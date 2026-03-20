@@ -1,0 +1,182 @@
+<!-- SmartAudit Axure Page: 租户系统 项目列表 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目管理 - SmartAudit 租户管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    .header { height: 56px; background: #1a73e8; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .header-title { font-size: 16px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .avatar { width: 34px; height: 34px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a73e8; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 200px; background: #fff; border-right: 1px solid #e0e0e0; padding: 12px 0; overflow-y: auto; }
+    .menu-item { padding: 11px 18px; cursor: pointer; color: #444; font-size: 13px; display: flex; align-items: center; gap: 10px; border-right: 3px solid transparent; }
+    .menu-item:hover { background: #f0f7ff; color: #1a73e8; }
+    .menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right-color: #1a73e8; }
+    .content { flex: 1; padding: 22px; overflow-y: auto; background: #f5f5f5; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-primary:hover { background: #1557b0; }
+    .btn-secondary { background: #fff; color: #333; border: 1px solid #ddd; }
+    .filters { background: #fff; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 11px; color: #888; }
+    .filter-group input, .filter-group select { height: 34px; border: 1px solid #ddd; border-radius: 5px; padding: 0 10px; font-size: 13px; outline: none; }
+    .filter-group input:focus, .filter-group select:focus { border-color: #1a73e8; }
+    .card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid #f0f0f0; }
+    th { background: #fafafa; font-size: 11px; color: #888; font-weight: 500; }
+    td { font-size: 13px; color: #333; }
+    .status { padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 500; display: inline-block; }
+    .status.active { background: #e6f4ea; color: #34a853; }
+    .status.paused { background: #fef7e0; color: #f9ab00; }
+    .status.stopped { background: #fce8e6; color: #ea4335; }
+    .mode-badge { padding: 2px 7px; border-radius: 3px; font-size: 10px; background: #e8f0fe; color: #1a73e8; }
+    .action-links { display: flex; gap: 10px; }
+    .action-links a { color: #1a73e8; text-decoration: none; font-size: 12px; }
+    .action-links a:hover { text-decoration: underline; }
+    .pagination { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #fafafa; }
+    .pagination-info { font-size: 12px; color: #888; }
+    .pagination-controls { display: flex; gap: 6px; }
+    .pagination-controls button { width: 30px; height: 30px; border: 1px solid #ddd; background: #fff; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    .pagination-controls button.active { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">SmartAudit 智核审核</span>
+    </div>
+    <div class="header-right">
+      <span>🔔 消息</span>
+      <div class="avatar">张</div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item active">📁 项目管理</div>
+      <div class="menu-item">📋 任务审核</div>
+      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item">⚙️ 系统设置</div>
+      <div style="border-top:1px solid #eee;margin:8px 0;"></div>
+      <div class="menu-item">👤 账户管理</div>
+      <div class="menu-item">🔗 第三方配置</div>
+      <div class="menu-item">📋 版本信息</div>
+      <div class="menu-item">💾 数据备份</div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1 class="page-title">项目管理</h1>
+        <button class="btn btn-primary">+ 新建项目</button>
+      </div>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label>关键词搜索</label>
+          <input type="text" placeholder="项目名称/编号" style="width:160px;">
+        </div>
+        <div class="filter-group">
+          <label>审核模式</label>
+          <select style="width:110px;">
+            <option>全部</option>
+            <option>自动审核</option>
+            <option>人工审核</option>
+            <option>混合模式</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>状态</label>
+          <select style="width:100px;">
+            <option>全部</option>
+            <option>运行中</option>
+            <option>已暂停</option>
+            <option>已停用</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" style="height:34px;">重置</button>
+        <button class="btn btn-primary" style="height:34px;">查询</button>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>项目名称</th>
+              <th>项目代码</th>
+              <th>审核模式</th>
+              <th>今日审核</th>
+              <th>通过率</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>企业认证审核</td>
+              <td>BIZ_AUTH</td>
+              <td><span class="mode-badge">混合模式</span></td>
+              <td>456</td>
+              <td>82.3%</td>
+              <td><span class="status active">运行中</span></td>
+              <td>2023-06-15</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">配置</a>
+                <a href="#">规则</a>
+              </td>
+            </tr>
+            <tr>
+              <td>合同文本审核</td>
+              <td>CONTRACT</td>
+              <td><span class="mode-badge">自动审核</span></td>
+              <td>128</td>
+              <td>95.6%</td>
+              <td><span class="status active">运行中</span></td>
+              <td>2023-08-20</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">配置</a>
+                <a href="#">规则</a>
+              </td>
+            </tr>
+            <tr>
+              <td>资质文件审查</td>
+              <td>QUALIFY</td>
+              <td><span class="mode-badge">人工审核</span></td>
+              <td>32</td>
+              <td>68.2%</td>
+              <td><span class="status paused">已暂停</span></td>
+              <td>2023-09-10</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">启用</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div class="pagination-info">共 8 个项目，第 1/1 页</div>
+          <div class="pagination-controls">
+            <button disabled>&lt;</button>
+            <button class="active">1</button>
+            <button disabled>&gt;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

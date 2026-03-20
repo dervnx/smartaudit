@@ -1,0 +1,159 @@
+<!-- SmartAudit Axure Page: SaaS 版本管理 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>版本管理 - SmartAudit SaaS 管理平台</title>
+  <link rel="stylesheet" href="../../_data/style.css">
+  <style>
+    body { height: 100vh; display: flex; flex-direction: column; }
+    .header { height: 60px; background: #1a73e8; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-title { font-size: 18px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+    .avatar { width: 36px; height: 36px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a73e8; font-weight: 600; }
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 220px; background: #f8f9fa; border-right: 1px solid #e0e0e0; padding: 16px 0; overflow-y: auto; }
+    .menu-item { padding: 12px 20px; cursor: pointer; color: #333; font-size: 14px; display: flex; align-items: center; gap: 12px; }
+    .menu-item:hover { background: #e8f0fe; color: #1a73e8; }
+    .menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right: 3px solid #1a73e8; }
+    .content { flex: 1; padding: 24px; overflow-y: auto; background: #f5f5f5; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .version-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .version-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 2px solid transparent; }
+    .version-card.featured { border-color: #1a73e8; position: relative; }
+    .version-card.featured::before { content: '推荐'; position: absolute; top: -10px; right: 16px; background: #1a73e8; color: #fff; padding: 2px 12px; border-radius: 4px; font-size: 12px; }
+    .version-card .name { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .version-card .price { font-size: 32px; font-weight: 700; color: #1a73e8; margin-bottom: 4px; }
+    .version-card .price .unit { font-size: 14px; font-weight: 400; color: #666; }
+    .version-card .period { font-size: 12px; color: #999; margin-bottom: 20px; }
+    .version-card .features { list-style: none; margin-bottom: 20px; }
+    .version-card .features li { padding: 8px 0; font-size: 14px; color: #333; display: flex; align-items: center; gap: 8px; }
+    .version-card .features li::before { content: '✓'; color: #34a853; font-weight: bold; }
+    .version-card .features li.disabled { color: #999; text-decoration: line-through; }
+    .version-card .features li.disabled::before { content: '✗'; color: #ea4335; }
+    .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .status-badge.active { background: #e6f4ea; color: #34a853; }
+    .status-badge.inactive { background: #fce8e6; color: #ea4335; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">SmartAudit SaaS 管理平台</span>
+    </div>
+    <div class="header-right">
+      <span>平台管理员</span>
+      <div class="avatar">管</div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="menu-item">📊 运营概览</div>
+      <div class="menu-item">🏢 租户管理</div>
+      <div class="menu-item active">📋 版本管理</div>
+      <div class="menu-item">⚙️ 系统配置</div>
+      <div class="menu-item">📈 运营统计</div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1 class="page-title">版本管理</h1>
+        <button class="btn btn-primary">+ 新增版本</button>
+      </div>
+
+      <div class="version-cards">
+        <div class="version-card">
+          <div class="name">基础版</div>
+          <div class="price">¥999<span class="unit">/月</span></div>
+          <div class="period">年付 ¥9,999</div>
+          <ul class="features">
+            <li>最多 10 用户</li>
+            <li>基础审核规则</li>
+            <li>100MB 存储空间</li>
+            <li>邮件支持</li>
+            <li class="disabled">高级分析报表</li>
+            <li class="disabled">API 接口</li>
+            <li class="disabled">自定义域名</li>
+          </ul>
+          <button class="btn btn-secondary" style="width:100%">编辑</button>
+        </div>
+
+        <div class="version-card featured">
+          <div class="name">专业版</div>
+          <div class="price">¥2,999<span class="unit">/月</span></div>
+          <div class="period">年付 ¥29,999</div>
+          <ul class="features">
+            <li>最多 50 用户</li>
+            <li>高级审核规则</li>
+            <li>1GB 存储空间</li>
+            <li>邮件+工单支持</li>
+            <li>高级分析报表</li>
+            <li>API 接口</li>
+            <li class="disabled">自定义域名</li>
+          </ul>
+          <button class="btn btn-primary" style="width:100%">编辑</button>
+        </div>
+
+        <div class="version-card">
+          <div class="name">企业版</div>
+          <div class="price">¥6,999<span class="unit">/月</span></div>
+          <div class="period">年付 ¥69,999</div>
+          <ul class="features">
+            <li>无限用户</li>
+            <li>企业级审核规则</li>
+            <li>10GB 存储空间</li>
+            <li>7×24 专属客服</li>
+            <li>高级分析报表</li>
+            <li>API 接口</li>
+            <li>自定义域名</li>
+          </ul>
+          <button class="btn btn-secondary" style="width:100%">编辑</button>
+        </div>
+      </div>
+
+      <div class="card mt-2xl">
+        <div class="card-header">
+          <h2 class="section-title">版本使用统计</h2>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>版本</th>
+              <th>租户数</th>
+              <th>本月收入</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>基础版</td>
+              <td>45</td>
+              <td>¥44,955</td>
+              <td><span class="status-badge active">启用</span></td>
+              <td><a href="#" class="link">编辑</a></td>
+            </tr>
+            <tr>
+              <td>专业版</td>
+              <td>38</td>
+              <td>¥113,962</td>
+              <td><span class="status-badge active">启用</span></td>
+              <td><a href="#" class="link">编辑</a></td>
+            </tr>
+            <tr>
+              <td>企业版</td>
+              <td>13</td>
+              <td>¥90,987</td>
+              <td><span class="status-badge active">启用</span></td>
+              <td><a href="#" class="link">编辑</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

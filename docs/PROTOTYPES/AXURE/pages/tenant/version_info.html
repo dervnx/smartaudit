@@ -1,0 +1,157 @@
+<!-- SmartAudit Axure Page: 租户系统 版本信息 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>版本信息 - SmartAudit 租户管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    .header { height: 56px; background: #1a73e8; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .header-title { font-size: 16px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .avatar { width: 34px; height: 34px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a73e8; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 200px; background: #fff; border-right: 1px solid #e0e0e0; padding: 12px 0; overflow-y: auto; }
+    .menu-item { padding: 11px 18px; cursor: pointer; color: #444; font-size: 13px; display: flex; align-items: center; gap: 10px; border-right: 3px solid transparent; }
+    .menu-item:hover { background: #f0f7ff; color: #1a73e8; }
+    .menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right-color: #1a73e8; }
+    .content { flex: 1; padding: 22px; overflow-y: auto; background: #f5f5f5; }
+    .page-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; }
+    .current-plan { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: #fff; border-radius: 12px; padding: 28px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .current-plan .plan-name { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .current-plan .plan-desc { font-size: 13px; opacity: 0.85; }
+    .current-plan .expiry { text-align: right; }
+    .current-plan .expiry .label { font-size: 12px; opacity: 0.75; margin-bottom: 4px; }
+    .current-plan .expiry .date { font-size: 18px; font-weight: 600; }
+    .current-plan .expiry .days { font-size: 12px; opacity: 0.75; margin-top: 4px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label { font-size: 13px; color: #666; }
+    .info-row .value { font-size: 13px; color: #333; font-weight: 500; }
+    .usage-item { margin-bottom: 14px; }
+    .usage-item:last-child { margin-bottom: 0; }
+    .usage-item .header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .usage-item .name { font-size: 12px; color: #555; }
+    .usage-item .count { font-size: 12px; color: #333; font-weight: 500; }
+    .progress-bar { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+    .progress-bar .fill { height: 100%; border-radius: 3px; }
+    .progress-bar .fill.blue { background: #1a73e8; }
+    .progress-bar .fill.green { background: #34a853; }
+    .progress-bar .fill.orange { background: #f9ab00; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary { background: #fff; color: #1a73e8; }
+    .btn-secondary { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+    .changelog { font-size: 12px; color: #666; line-height: 1.7; }
+    .changelog li { margin-bottom: 8px; }
+    .changelog .version { font-weight: 600; color: #333; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">SmartAudit 智核审核</span>
+    </div>
+    <div class="header-right">
+      <div class="avatar">张</div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item">📁 项目管理</div>
+      <div class="menu-item">📋 任务审核</div>
+      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item">⚙️ 系统设置</div>
+      <div style="border-top:1px solid #eee;margin:8px 0;"></div>
+      <div class="menu-item">👤 账户管理</div>
+      <div class="menu-item">🔗 第三方配置</div>
+      <div class="menu-item active">📋 版本信息</div>
+      <div class="menu-item">💾 数据备份</div>
+    </div>
+
+    <div class="content">
+      <h1 class="page-title">版本信息</h1>
+
+      <div class="current-plan">
+        <div>
+          <div class="plan-name">专业版</div>
+          <div class="plan-desc">包含所有基础功能，高级审核规则，API接口支持</div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-primary">升级企业版</button>
+            <button class="btn btn-secondary">续费</button>
+          </div>
+        </div>
+        <div class="expiry">
+          <div class="label">服务到期日期</div>
+          <div class="date">2024-12-31</div>
+          <div class="days">还有 351 天</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">资源使用</div>
+          <div class="usage-item">
+            <div class="header">
+              <span class="name">用户数</span>
+              <span class="count">45 / 50</span>
+            </div>
+            <div class="progress-bar"><div class="fill blue" style="width:90%"></div></div>
+          </div>
+          <div class="usage-item">
+            <div class="header">
+              <span class="name">存储空间</span>
+              <span class="count">8.5 GB / 10 GB</span>
+            </div>
+            <div class="progress-bar"><div class="fill orange" style="width:85%"></div></div>
+          </div>
+          <div class="usage-item">
+            <div class="header">
+              <span class="name">API调用 (本月)</span>
+              <span class="count">125,890 / 无限</span>
+            </div>
+            <div class="progress-bar"><div class="fill green" style="width:30%"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">账户信息</div>
+          <div class="info-row">
+            <span class="label">租户名称</span>
+            <span class="value">上海金服信息集团</span>
+          </div>
+          <div class="info-row">
+            <span class="label">租户代码</span>
+            <span class="value">shjf</span>
+          </div>
+          <div class="info-row">
+            <span class="label">创建时间</span>
+            <span class="value">2023-06-15</span>
+          </div>
+          <div class="info-row">
+            <span class="label">计费方式</span>
+            <span class="value">年付</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-4" style="margin-top:18px;">
+        <div class="card-title">更新日志</div>
+        <ul class="changelog">
+          <li><span class="version">v2.3.1</span> (2024-01-10) — 优化规则引擎执行性能，提升审核速度15%</li>
+          <li><span class="version">v2.3.0</span> (2024-01-05) — 新增批量审核功能，支持最多100条同时处理</li>
+          <li><span class="version">v2.2.5</span> (2023-12-20) — 修复已知问题，提升系统稳定性</li>
+          <li><span class="version">v2.2.0</span> (2023-12-15) — 新增人工复核工作流，支持审核记录追溯</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

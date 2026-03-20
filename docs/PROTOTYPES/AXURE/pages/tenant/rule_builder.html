@@ -1,0 +1,221 @@
+<!-- SmartAudit Axure Page: 租户系统 规则配置 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>规则配置 - SmartAudit 租户管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    .header { height: 56px; background: #1a73e8; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .header-title { font-size: 16px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .avatar { width: 34px; height: 34px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a73e8; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 200px; background: #fff; border-right: 1px solid #e0e0e0; padding: 12px 0; overflow-y: auto; }
+    .menu-item { padding: 11px 18px; cursor: pointer; color: #444; font-size: 13px; display: flex; align-items: center; gap: 10px; border-right: 3px solid transparent; }
+    .menu-item:hover { background: #f0f7ff; color: #1a73e8; }
+    .menu-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; border-right-color: #1a73e8; }
+    .content { flex: 1; padding: 22px; overflow-y: auto; background: #f5f5f5; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+    .breadcrumb { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .breadcrumb a { color: #1a73e8; text-decoration: none; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-primary:hover { background: #1557b0; }
+    .btn-secondary { background: #fff; color: #333; border: 1px solid #ddd; }
+    .layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+    .rule-list-panel { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 16px; height: fit-content; }
+    .panel-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    .rule-item { padding: 11px 12px; border-radius: 6px; cursor: pointer; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .rule-item:hover { background: #f5f5f5; }
+    .rule-item.active { background: #e8f0fe; }
+    .rule-item .name { font-size: 13px; color: #333; }
+    .rule-item .tag { font-size: 10px; padding: 2px 6px; border-radius: 3px; }
+    .rule-item .tag.pass { background: #e6f4ea; color: #34a853; }
+    .rule-item .tag.reject { background: #fce8e6; color: #ea4335; }
+    .rule-item .tag.warn { background: #fef7e0; color: #f9ab00; }
+    .rule-editor { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 20px; }
+    .form-section { margin-bottom: 24px; }
+    .form-section-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; color: #555; margin-bottom: 5px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; height: 36px; border: 1px solid #ddd; border-radius: 5px; padding: 0 10px; font-size: 13px; outline: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #1a73e8; }
+    .form-group textarea { height: auto; min-height: 80px; resize: vertical; }
+    .condition-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .condition-row select, .condition-row input { height: 32px; font-size: 12px; }
+    .condition-row select { width: 120px; }
+    .condition-row input { width: 100px; }
+    .condition-row .op { width: 80px; }
+    .add-btn { color: #1a73e8; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .add-btn:hover { text-decoration: underline; }
+    .actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">SmartAudit 智核审核</span>
+    </div>
+    <div class="header-right">
+      <div class="avatar">张</div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item active">📁 项目管理</div>
+      <div class="menu-item">📋 任务审核</div>
+      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item">⚙️ 系统设置</div>
+      <div style="border-top:1px solid #eee;margin:8px 0;"></div>
+      <div class="menu-item">👤 账户管理</div>
+      <div class="menu-item">🔗 第三方配置</div>
+      <div class="menu-item">📋 版本信息</div>
+      <div class="menu-item">💾 数据备份</div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="#">项目管理</a> / 企业认证审核 (BIZ_AUTH) / <a href="#">规则配置</a>
+      </div>
+
+      <div class="page-header">
+        <h1 class="page-title">规则配置</h1>
+        <button class="btn btn-primary">+ 新增规则</button>
+      </div>
+
+      <div class="layout">
+        <div class="rule-list-panel">
+          <div class="panel-title">规则列表</div>
+          <div class="rule-item active">
+            <span class="name">企业名称合规</span>
+            <span class="tag pass">通过</span>
+          </div>
+          <div class="rule-item">
+            <span class="name">法人身份验证</span>
+            <span class="tag warn">复核</span>
+          </div>
+          <div class="rule-item">
+            <span class="name">营业执照核验</span>
+            <span class="tag pass">通过</span>
+          </div>
+          <div class="rule-item">
+            <span class="name">经营异常检测</span>
+            <span class="tag reject">驳回</span>
+          </div>
+          <div class="rule-item">
+            <span class="name">注册地址验证</span>
+            <span class="tag warn">复核</span>
+          </div>
+        </div>
+
+        <div class="rule-editor">
+          <div class="form-section">
+            <div class="form-section-title">基本信息</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>规则名称</label>
+                <input type="text" value="企业名称合规检测">
+              </div>
+              <div class="form-group">
+                <label>规则编码</label>
+                <input type="text" value="BIZ_NAME_CHECK" disabled style="background:#f5f5f5;color:#888;">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>执行结果</label>
+                <select>
+                  <option>自动通过</option>
+                  <option selected>需要人工复核</option>
+                  <option>自动驳回</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>优先级</label>
+                <select>
+                  <option>1 - 最高</option>
+                  <option selected>2 - 高</option>
+                  <option>3 - 中</option>
+                  <option>4 - 低</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>规则描述</label>
+              <textarea>检测企业名称是否符合工商命名规范，包括行政区划使用、字号重复、行业表述等问题。</textarea>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">条件配置</div>
+            <div class="condition-row">
+              <select>
+                <option selected>名称长度</option>
+                <option>包含关键词</option>
+                <option>行政区划</option>
+                <option>行业表述</option>
+              </select>
+              <select class="op">
+                <option>大于</option>
+                <option>小于</option>
+                <option>等于</option>
+                <option>包含</option>
+              </select>
+              <input type="text" value="50">
+              <select style="width:100px;">
+                <option>字符</option>
+                <option>字节</option>
+              </select>
+            </div>
+            <div class="condition-row">
+              <select>
+                <option>行政区划</option>
+                <option selected>包含关键词</option>
+                <option>行业表述</option>
+              </select>
+              <select class="op">
+                <option>包含</option>
+                <option>不包含</option>
+              </select>
+              <input type="text" value="北京,上海,深圳">
+              <span style="font-size:11px;color:#888;">(逗号分隔)</span>
+            </div>
+            <div class="add-btn">+ 添加条件</div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">高级配置</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>置信度阈值</label>
+                <input type="number" value="85" style="width:100px;"> %
+              </div>
+              <div class="form-group">
+                <label>规则状态</label>
+                <select>
+                  <option selected>启用</option>
+                  <option>禁用</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary">保存规则</button>
+            <button class="btn btn-secondary">测试规则</button>
+            <button class="btn btn-secondary" style="color:#ea4335;border-color:#ea4335;">删除规则</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

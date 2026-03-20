@@ -1,0 +1,73 @@
+<!-- SmartAudit Axure Page: SaaS 登录页 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartAudit - SaaS 管理平台登录</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; }
+    .left-panel { width: 60%; background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 60px; }
+    .left-panel h1 { font-size: 48px; margin-bottom: 20px; }
+    .left-panel p { font-size: 18px; opacity: 0.9; max-width: 400px; text-align: center; line-height: 1.6; }
+    .right-panel { width: 40%; display: flex; flex-direction: column; justify-content: center; padding: 60px; }
+    .login-box { max-width: 360px; margin: 0 auto; width: 100%; }
+    .login-box h2 { font-size: 28px; color: #1a1a1a; margin-bottom: 8px; }
+    .login-box .subtitle { color: #666; margin-bottom: 32px; font-size: 14px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 14px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .form-group input { width: 100%; height: 44px; border: 1px solid #ddd; border-radius: 8px; padding: 0 16px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: #1a73e8; }
+    .form-group .captcha-row { display: flex; gap: 12px; }
+    .form-group .captcha-row input { flex: 1; }
+    .form-group .captcha-img { width: 120px; height: 44px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #999; }
+    .btn-login { width: 100%; height: 48px; background: #1a73e8; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 24px; }
+    .btn-login:hover { background: #1557b0; }
+    .login-options { display: flex; justify-content: space-between; margin-top: 16px; font-size: 14px; }
+    .login-options a { color: #1a73e8; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <!-- Left Panel - Branding -->
+  <div class="left-panel">
+    <h1>SmartAudit</h1>
+    <p>智核智能审核系统 - SaaS 管理平台<br/>高效、安全、可信赖的企业级审核解决方案</p>
+  </div>
+
+  <!-- Right Panel - Login Form -->
+  <div class="right-panel">
+    <div class="login-box">
+      <h2>管理员登录</h2>
+      <p class="subtitle">请输入您的账户信息登录系统</p>
+
+      <form>
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" placeholder="请输入用户名" value="admin">
+        </div>
+
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" placeholder="请输入密码" value="Admin123!">
+        </div>
+
+        <div class="form-group">
+          <label>验证码</label>
+          <div class="captcha-row">
+            <input type="text" placeholder="请输入验证码" value="ABCD">
+            <div class="captcha-img">&#x7B7E;&#x540D;&#x9A23;&#x9A8B;</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login">登 录</button>
+
+        <div class="login-options">
+          <a href="#">忘记密码？</a>
+          <a href="#">联系管理员</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
