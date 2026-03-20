@@ -280,9 +280,11 @@ class AuditData(Base):
     tenant_id: UUID
     project_id: UUID
     input_data: JSON             # 原始入参数据
+    source: str                  # manual/api/import 数据来源
     rule_result: JSON            # 规则执行结果
     auto_result: str             # 自动审核结果
     final_result: str             # 最终审核结果
+    audit_mode: str              # auto/manual 审核模式
     auditor_id: UUID              # 审核员ID
     audit_time: datetime         # 审核时间
     audit_note: str              # 审核备注
@@ -291,10 +293,35 @@ class AuditData(Base):
     recheck_time: datetime
     recheck_result: str
     recheck_note: str
+    manual_intervention: bool     # 是否有人工介入
+    manual_operator_id: UUID      # 人工操作人ID
+    manual_operator_name: str
+    manual_action: str           # modify/recheck/override
+    manual_action_time: datetime
     status: str                  # pending/in_progress/passed/rejected/rechecking
     priority: int                # 优先级
     created_at: datetime
     updated_at: datetime
+
+
+class AuditOperationLog(Base):
+    """审核操作日志"""
+    __tablename__ = "audit_operation_log"
+
+    id: UUID
+    tenant_id: UUID
+    audit_data_id: UUID          # 关联的审核数据ID
+    action: str                   # submit/auto_pass/auto_reject/assign_auditor/
+                                  # audit_pass/audit_reject/recheck/
+                                  # manual_modify/manual_override/recheck_override
+    operator_type: str            # system/auditor/manual
+    operator_id: UUID
+    operator_name: str
+    before_state: str             # 操作前状态
+    after_state: str              # 操作后状态
+    detail: str                   # 操作详情
+    request_data: JSON           # 请求数据（人工介入时）
+    created_at: datetime
 
 
 class Task(Base):
@@ -468,7 +495,10 @@ class BackupRecord(Base):
 | POST | /api/v1/audit/submit | 提交数据 |
 | POST | /api/v1/audit/{id}/execute | 执行审核 |
 | GET | /api/v1/audit/{id} | 审核详情 |
-| POST | /api/v1/audit/{id}/mark-recheck | 标记二次校验 |
+| GET | /api/v1/audit/{id}/logs | 审核操作日志 |
+| PUT | /api/v1/audit/{id}/manual-modify | 人工修改数据 |
+| POST | /api/v1/audit/{id}/recheck | 二次复核 |
+| POST | /api/v1/audit/{id}/override | 强制终态 |
 
 ### 4.7 任务接口
 
@@ -564,4 +594,268 @@ def cleanup_old_backups(tenant_id: str, retention_days: int):
 def notify_auditor(auditor_id: str, task_count: int):
     """通知审核员"""
     pass
+```
+
+### 5.3 审核工作流服务
+
+```python
+# app/services/audit_service.py
+class AuditWorkflowService:
+    """审核工作流服务"""
+
+    async def submit_audit(
+        self,
+        tenant_id: str,
+        project_id: str,
+        input_data: dict,
+        source: str = 'manual'
+    ) -> AuditData:
+        """
+        提交审核数据
+
+        工作流：
+        1. 校验项目和规则配置
+        2. 执行规则引擎
+        3. 根据项目配置决定审核模式
+        4. 自动审核或分配审核员
+        """
+        # 获取项目配置
+        project = await self.project_service.get(project_id)
+
+        # 执行规则引擎
+        rule_result = await self.rule_engine.execute(
+            rules=project.rule_ids,
+            data=input_data
+        )
+
+        # 创建审核数据
+        audit_data = AuditData(
+            tenant_id=tenant_id,
+            project_id=project_id,
+            input_data=input_data,
+            source=source,
+            rule_result=rule_result,
+            auto_result=rule_result.passed,
+            audit_mode='auto' if not project.audit_config.need_manual_review else 'manual',
+            status='pending',
+            created_at=datetime.utcnow()
+        )
+
+        # 记录操作日志
+        await self.log_operation(
+            audit_data_id=audit_data.id,
+            action='submit',
+            operator_type='manual' if source == 'manual' else 'system',
+            before_state=None,
+            after_state='pending'
+        )
+
+        # 根据审核模式处理
+        if not project.audit_config.need_manual_review:
+            # 自动审核模式
+            if rule_result.passed:
+                audit_data.final_result = 'pass'
+                audit_data.status = 'passed'
+                await self.log_operation(
+                    audit_data_id=audit_data.id,
+                    action='auto_pass',
+                    operator_type='system',
+                    before_state='pending',
+                    after_state='passed'
+                )
+            else:
+                audit_data.final_result = 'reject'
+                audit_data.status = 'rejected'
+                await self.log_operation(
+                    audit_data_id=audit_data.id,
+                    action='auto_reject',
+                    operator_type='system',
+                    before_state='pending',
+                    after_state='rejected'
+                )
+        else:
+            # 人工审核模式：需要分配审核员
+            auditor = await self.task_service.assign_auditor(
+                project_id=project_id,
+                data_id=audit_data.id
+            )
+            audit_data.auditor_id = auditor.id
+            audit_data.status = 'in_progress'
+            await self.log_operation(
+                audit_data_id=audit_data.id,
+                action='assign_auditor',
+                operator_type='system',
+                before_state='pending',
+                after_state='in_progress'
+            )
+
+        await self.audit_repo.save(audit_data)
+        return audit_data
+
+
+    async def execute_audit(
+        self,
+        audit_data_id: str,
+        auditor_id: str,
+        result: str,
+        note: str = None
+    ) -> AuditData:
+        """审核员执行审核"""
+        audit_data = await self.audit_repo.get(audit_data_id)
+
+        old_status = audit_data.status
+        audit_data.final_result = result
+        audit_data.auditor_id = auditor_id
+        audit_data.audit_time = datetime.utcnow()
+        audit_data.audit_note = note
+        audit_data.status = 'passed' if result == 'pass' else 'rejected'
+
+        await self.log_operation(
+            audit_data_id=audit_data.id,
+            action='audit_pass' if result == 'pass' else 'audit_reject',
+            operator_type='auditor',
+            operator_id=auditor_id,
+            before_state=old_status,
+            after_state=audit_data.status
+        )
+
+        await self.audit_repo.save(audit_data)
+        return audit_data
+
+
+    async def recheck(
+        self,
+        audit_data_id: str,
+        auditor_id: str,
+        result: str,
+        note: str = None,
+        force_override: bool = False
+    ) -> AuditData:
+        """
+        二次复核
+
+        对已审核数据进行再次审核，可覆盖原结果
+        """
+        audit_data = await self.audit_repo.get(audit_data_id)
+
+        old_result = audit_data.final_result
+        old_status = audit_data.status
+
+        audit_data.need_recheck = False
+        audit_data.recheck_auditor_id = auditor_id
+        audit_data.recheck_time = datetime.utcnow()
+        audit_data.recheck_result = result
+        audit_data.recheck_note = note
+
+        if force_override:
+            audit_data.final_result = result
+            audit_data.status = 'passed' if result == 'pass' else 'rejected'
+            action = 'recheck_override'
+        else:
+            action = 'recheck'
+
+        await self.log_operation(
+            audit_data_id=audit_data.id,
+            action=action,
+            operator_type='auditor',
+            operator_id=auditor_id,
+            before_state=old_status,
+            after_state=audit_data.status,
+            detail=f"原结果: {old_result} → 新结果: {result}"
+        )
+
+        await self.audit_repo.save(audit_data)
+        return audit_data
+
+
+    async def manual_modify(
+        self,
+        audit_data_id: str,
+        operator_id: str,
+        input_data: dict,
+        reason: str
+    ) -> AuditData:
+        """
+        人工修改数据（外部渠道数据修正）
+
+        保留修改痕迹，记录操作日志
+        """
+        audit_data = await self.audit_repo.get(audit_data_id)
+
+        old_input_data = audit_data.input_data
+        audit_data.input_data = input_data
+        audit_data.manual_intervention = True
+        audit_data.manual_operator_id = operator_id
+        audit_data.manual_action = 'modify'
+        audit_data.manual_action_time = datetime.utcnow()
+
+        # 重新执行规则引擎
+        new_rule_result = await self.rule_engine.execute(
+            rules=audit_data.project.rule_ids,
+            data=input_data
+        )
+        audit_data.rule_result = new_rule_result
+
+        await self.log_operation(
+            audit_data_id=audit_data.id,
+            action='manual_modify',
+            operator_type='manual',
+            operator_id=operator_id,
+            before_state=old_input_data,
+            after_state=input_data,
+            detail=f"修改原因: {reason}"
+        )
+
+        await self.audit_repo.save(audit_data)
+        return audit_data
+
+
+    async def manual_override(
+        self,
+        audit_data_id: str,
+        operator_id: str,
+        final_result: str,
+        reason: str
+    ) -> AuditData:
+        """
+        人工强制终态
+
+        特殊情况下人工干预，强制设置最终结果
+        """
+        audit_data = await self.audit_repo.get(audit_data_id)
+
+        old_result = audit_data.final_result
+        old_status = audit_data.status
+
+        audit_data.final_result = final_result
+        audit_data.status = 'passed' if final_result == 'pass' else 'rejected'
+        audit_data.manual_intervention = True
+        audit_data.manual_operator_id = operator_id
+        audit_data.manual_action = 'override'
+        audit_data.manual_action_time = datetime.utcnow()
+
+        await self.log_operation(
+            audit_data_id=audit_data.id,
+            action='manual_override',
+            operator_type='manual',
+            operator_id=operator_id,
+            before_state=old_status,
+            after_state=audit_data.status,
+            detail=f"强制终态原因: {reason}，原结果: {old_result} → 新结果: {final_result}"
+        )
+
+        await self.audit_repo.save(audit_data)
+        return audit_data
+
+
+    async def get_operation_logs(
+        self,
+        audit_data_id: str
+    ) -> List[AuditOperationLog]:
+        """获取审核操作日志"""
+        return await self.operation_log_repo.list(
+            filters={'audit_data_id': audit_data_id},
+            order_by='created_at',
+            desc=True
+        )
 ```

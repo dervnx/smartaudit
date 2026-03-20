@@ -385,23 +385,61 @@ interface AuditData {
   tenant_id: UUID;
   project_id: UUID;
   project_name?: string;
-  input_data: Record<string, any>;
-  rule_result?: RuleResult;
-  auto_result?: 'pass' | 'reject' | 'pending';
-  final_result?: 'pass' | 'reject' | 'recheck';
-  auditor_id?: UUID;
+  input_data: Record<string, any>;         // 原始提交数据
+  source: 'manual' | 'api' | 'import';     // 数据来源
+  rule_result?: RuleResult;                // 规则执行结果
+  auto_result?: 'pass' | 'reject' | 'pending';  // 自动审核结果
+  final_result?: 'pass' | 'reject' | 'recheck';  // 最终审核结果
+  audit_mode: 'auto' | 'manual';          // 审核模式：自动/人工
+  auditor_id?: UUID;                       // 审核员ID
   auditor_name?: string;
   audit_time?: DateTime;
   audit_note?: string;
-  need_recheck: boolean;
-  recheck_auditor_id?: UUID;
+  need_recheck: boolean;                   // 是否需要人工复核
+  recheck_auditor_id?: UUID;               // 复核员ID
   recheck_time?: DateTime;
   recheck_result?: 'pass' | 'reject';
   recheck_note?: string;
+  manual_intervention?: boolean;           // 是否有人工介入
+  manual_operator_id?: UUID;                // 人工操作人ID
+  manual_operator_name?: string;
+  manual_action?: 'modify' | 'recheck' | 'override';  // 人工操作类型
+  manual_action_time?: DateTime;
   status: AuditStatus;
   priority: number;
   created_at: DateTime;
 }
+```
+
+### 7.2 审核操作日志
+
+```typescript
+interface AuditOperationLog {
+  id: UUID;
+  tenant_id: UUID;
+  audit_data_id: UUID;                      // 关联的审核数据ID
+  action: AuditAction;                     // 操作类型
+  operator_type: 'system' | 'auditor' | 'manual';  // 操作者类型
+  operator_id?: UUID;                      // 操作人ID
+  operator_name?: string;
+  before_state?: AuditStatus;               // 操作前状态
+  after_state?: AuditStatus;                // 操作后状态
+  detail?: string;                          // 操作详情
+  request_data?: Record<string, any>;      // 请求数据（人工介入时）
+  created_at: DateTime;
+}
+
+type AuditAction =
+  | 'submit'           // 提交审核
+  | 'auto_pass'        // 自动通过
+  | 'auto_reject'      // 自动拒绝
+  | 'assign_auditor'   // 分配审核员
+  | 'audit_pass'       // 审核通过
+  | 'audit_reject'     // 审核拒绝
+  | 'recheck'          // 二次复核
+  | 'manual_modify'    // 人工修改数据
+  | 'manual_override'   // 人工强制终态
+  | 'recheck_override'; // 复核覆盖
 ```
 
 ## 8. 任务

@@ -350,7 +350,16 @@ interface CreateProjectRequest {
   description?: string;
   fields_def: FieldDefinition[];
   rule_ids?: string[];
-  need_manual_review?: boolean;
+
+  // 审核模式配置
+  audit_config: {
+    mode: 'auto' | 'manual' | 'mixed';  // 自动/人工/混合模式
+    need_manual_review: boolean;        // 是否需要人工复核
+    auto_pass_on_rule_pass?: boolean;   // 规则通过时自动终态通过（无需审核员）
+    recheck_enabled?: boolean;          // 是否启用二次复核
+    recheck_on_reject_only?: boolean;   // 仅对拒绝数据启用复核
+  };
+
   task_assign_type?: 'round_robin' | 'load_balance' | 'efficiency' | 'random' | 'manual';
 }
 
@@ -508,6 +517,43 @@ interface TestRuleResponse {
 
 ## 7. 审核接口
 
+### 7.0 审核工作流说明
+
+```
+数据提交流程
+─────────────────────────────────────────────────────────────────
+1. 提交数据
+   POST /api/v1/audit/submit
+   └── 项目配置 need_manual_review=false
+       ├── 规则校验 → auto_result=pass → 直接终态 passed（无需审核员）
+       └── 规则校验 → auto_result=reject → 终态 rejected（无需审核员）
+
+   └── 项目配置 need_manual_review=true
+       ├── 规则校验 → auto_result=pass → 分配审核员 → pending → auditor 审核
+       └── 规则校验 → auto_result=reject → 分配审核员 → pending → auditor 审核
+─────────────────────────────────────────────────────────────────
+
+人工介入流程
+─────────────────────────────────────────────────────────────────
+1. 人工修改数据（外部渠道数据修正）
+   PUT /api/v1/audit/{id}/manual-modify
+   └── 修改 input_data
+   └── 记录操作日志（manual_modify）
+   └── 状态保持或更新
+
+2. 二次复核（对已审核数据再次审核）
+   POST /api/v1/audit/{id}/recheck
+   └── 分配复核任务
+   └── 复核结果覆盖原结果
+   └── 记录复核日志（recheck/recheck_override）
+
+3. 强制终态（特殊情况下人工强制终态）
+   POST /api/v1/audit/{id}/override
+   └── 强制设置 final_result
+   └── 记录操作日志（manual_override）
+─────────────────────────────────────────────────────────────────
+```
+
 ### 7.1 待审核列表
 
 ```
@@ -596,6 +642,7 @@ interface AuditDetailResponse {
     project_id: string;
     project_name: string;
     input_data: Record<string, any>;
+    source: 'manual' | 'api' | 'import';
     rule_result: {
       passed: boolean;
       conditions: ConditionResult[];
@@ -603,6 +650,7 @@ interface AuditDetailResponse {
     };
     auto_result?: string;
     final_result?: string;
+    audit_mode: 'auto' | 'manual';
     auditor_id?: string;
     auditor_name?: string;
     audit_time?: string;
@@ -611,6 +659,12 @@ interface AuditDetailResponse {
     recheck_auditor_id?: string;
     recheck_time?: string;
     recheck_result?: string;
+    recheck_note?: string;
+    manual_intervention?: boolean;
+    manual_operator_id?: string;
+    manual_operator_name?: string;
+    manual_action?: string;
+    manual_action_time?: string;
     status: string;
     created_at: string;
   };
@@ -623,6 +677,78 @@ interface ConditionResult {
   expected: any;
   actual: any;
   passed: boolean;
+}
+```
+
+### 7.6 审核操作日志
+
+```
+GET /api/v1/audit/{id}/logs
+```
+
+**响应**:
+```typescript
+interface AuditOperationLogResponse {
+  code: 0;
+  data: {
+    items: {
+      id: string;
+      action: 'submit' | 'auto_pass' | 'auto_reject' | 'assign_auditor' |
+             'audit_pass' | 'audit_reject' | 'recheck' | 'manual_modify' |
+             'manual_override' | 'recheck_override';
+      operator_type: 'system' | 'auditor' | 'manual';
+      operator_id?: string;
+      operator_name?: string;
+      before_state?: string;
+      after_state?: string;
+      detail?: string;
+      created_at: string;
+    }[];
+    total: number;
+  };
+}
+```
+
+### 7.7 人工修改数据
+
+```
+PUT /api/v1/audit/{id}/manual-modify
+```
+
+**请求参数**:
+```typescript
+interface ManualModifyRequest {
+  input_data: Record<string, any>;    // 修改后的数据
+  reason: string;                     // 修改原因
+}
+```
+
+### 7.8 二次复核
+
+```
+POST /api/v1/audit/{id}/recheck
+```
+
+**请求参数**:
+```typescript
+interface RecheckRequest {
+  result: 'pass' | 'reject';
+  note?: string;
+  force_override?: boolean;  // 是否强制覆盖原结果
+}
+```
+
+### 7.9 强制终态
+
+```
+POST /api/v1/audit/{id}/override
+```
+
+**请求参数**:
+```typescript
+interface OverrideRequest {
+  final_result: 'pass' | 'reject';
+  reason: string;
 }
 ```
 
