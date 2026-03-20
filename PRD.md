@@ -176,39 +176,90 @@ smartaudit/
 
 ```
 smartaudit-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/com/smartaudit/
-│   │   │   ├── SmartAuditApplication.java
-│   │   │   ├── config/               # 配置类
-│   │   │   │   ├── SecurityConfig.java
-│   │   │   │   ├── RedisConfig.java
-│   │   │   │   └── SwaggerConfig.java
-│   │   │   ├── controller/           # 控制器
-│   │   │   │   ├── TenantController.java
-│   │   │   │   ├── ProjectController.java
-│   │   │   │   ├── RuleController.java
-│   │   │   │   ├── TaskController.java
-│   │   │   │   ├── AuditController.java
-│   │   │   │   ├── ThirdPartyController.java
-│   │   │   │   ├── StatisticsController.java
-│   │   │   │   └── AccountController.java
-│   │   │   ├── service/              # 服务层
-│   │   │   │   ├── impl/
-│   │   │   │   └── interfaces/
-│   │   │   ├── repository/           # 数据访问层
-│   │   │   ├── entity/               # 实体类
-│   │   │   ├── dto/                  # 数据传输对象
-│   │   │   ├── vo/                   # 视图对象
-│   │   │   ├── enums/                # 枚举类
-│   │   │   ├── exception/            # 异常处理
-│   │   │   └── util/                 # 工具类
-│   │   └── resources/
-│   │       ├── application.yml
-│   │       ├── mapper/               # MyBatis mapper 文件
-│   │       └── lua/                  # Lua 脚本（用于任务分配）
-│   └── test/                         # 测试类
-├── pom.xml
+├── app/
+│   ├── api/                      # API 路由
+│   │   ├── deps.py               # 依赖注入
+│   │   └── v1/                   # v1 版本 API
+│   │       ├── __init__.py
+│   │       ├── auth.py           # 认证接口
+│   │       ├── tenant.py         # 租户接口
+│   │       ├── account.py        # 账户接口
+│   │       ├── project.py        # 项目接口
+│   │       ├── rule.py           # 规则接口
+│   │       ├── audit.py          # 审核接口
+│   │       ├── task.py           # 任务接口
+│   │       ├── third_party.py    # 三方接口
+│   │       ├── statistics.py     # 统计接口
+│   │       ├── backup.py         # 备份接口
+│   │       └── version.py        # 版本接口
+│   │
+│   ├── core/                     # 核心配置
+│   │   ├── config.py             # 配置管理
+│   │   ├── security.py           # 安全认证
+│   │   ├── database.py           # 数据库连接
+│   │   └── celery.py             # Celery 配置
+│   │
+│   ├── models/                   # SQLAlchemy 模型
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── role.py
+│   │   ├── project.py
+│   │   ├── rule.py
+│   │   ├── audit_data.py
+│   │   ├── task.py
+│   │   ├── third_party.py
+│   │   ├── backup.py
+│   │   └── operation_log.py
+│   │
+│   ├── schemas/                  # Pydantic 模型
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── tenant.py
+│   │   ├── account.py
+│   │   ├── project.py
+│   │   ├── rule.py
+│   │   ├── audit.py
+│   │   ├── task.py
+│   │   └── common.py
+│   │
+│   ├── services/                 # 业务逻辑层
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── account_service.py
+│   │   ├── project_service.py
+│   │   ├── rule_service.py
+│   │   ├── audit_service.py
+│   │   ├── task_service.py
+│   │   ├── third_party_service.py
+│   │   ├── backup_service.py
+│   │   └── statistics_service.py
+│   │
+│   ├── tasks/                    # Celery 异步任务
+│   │   ├── __init__.py
+│   │   ├── celery_app.py
+│   │   ├── audit_tasks.py
+│   │   ├── backup_tasks.py
+│   │   └── notification_tasks.py
+│   │
+│   ├── utils/                    # 工具函数
+│   │   ├── __init__.py
+│   │   ├── rule_engine.py       # 规则引擎
+│   │   ├── pagination.py         # 分页工具
+│   │   └── validators.py        # 验证器
+│   │
+│   ├── middleware/               # 中间件
+│   │   └── auth.py
+│   │
+│   └── main.py                   # FastAPI 入口
+│
+├── migrations/                    # Alembic 数据库迁移
+├── tests/                        # 测试目录
+│   ├── api/
+│   ├── services/
+│   └── conftest.py
+│
+├── requirements.txt
+├── pyproject.toml
 └── README.md
 ```
 
