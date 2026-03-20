@@ -1,0 +1,197 @@
+<!-- SmartAudit MVP - 项目管理 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目管理 - SmartAudit MVP</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .filters { background: var(--white); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-end; }
+    .filters .form-group { margin-bottom: 0; }
+    .filters label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; display: block; }
+    table td .project-name { font-weight: 500; }
+    table td .project-code { font-size: 11px; color: var(--text-muted); }
+    .action-links { display: flex; gap: 10px; }
+    .action-links a { font-size: 12px; }
+    .modal-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-form .full { grid-column: span 2; }
+    .config-tips { background: var(--primary-light); border-radius: 6px; padding: 12px; font-size: 12px; color: var(--primary); margin-top: 12px; }
+    .config-tips strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">SmartAudit MVP</div>
+    <div class="header-right">
+      <div class="avatar">管</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item active">📁 项目管理</div>
+      <div class="menu-item">📋 审核任务</div>
+      <div class="menu-item">📈 数据统计</div>
+    </div>
+
+    <div class="main">
+      <div class="page-header">
+        <h1 class="page-title">项目管理</h1>
+        <button class="btn btn-primary" onclick="document.getElementById('createModal').style.display='flex'">+ 新建项目</button>
+      </div>
+
+      <div class="filters">
+        <div class="form-group">
+          <label>关键词搜索</label>
+          <input type="text" class="form-control" placeholder="项目名称/代码" style="width: 160px;">
+        </div>
+        <div class="form-group">
+          <label>审核模式</label>
+          <select class="form-control" style="width: 120px;">
+            <option>全部</option>
+            <option>自动审核</option>
+            <option>人工审核</option>
+            <option>混合模式</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>状态</label>
+          <select class="form-control" style="width: 100px;">
+            <option>全部</option>
+            <option>运行中</option>
+            <option>已暂停</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary btn-sm">重置</button>
+        <button class="btn btn-primary btn-sm">查询</button>
+      </div>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>项目名称</th>
+              <th>项目代码</th>
+              <th>审核模式</th>
+              <th>今日审核</th>
+              <th>通过率</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="project-name">企业认证审核</div>
+              </td>
+              <td><span class="project-code">BIZ_AUTH</span></td>
+              <td><span class="badge info">混合模式</span></td>
+              <td>456</td>
+              <td>82.3%</td>
+              <td><span class="badge success">运行中</span></td>
+              <td>2023-06-15</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">配置</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="project-name">合同文本审核</div>
+              </td>
+              <td><span class="project-code">CONTRACT</span></td>
+              <td><span class="badge info">自动审核</span></td>
+              <td>128</td>
+              <td>95.6%</td>
+              <td><span class="badge success">运行中</span></td>
+              <td>2023-08-20</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">配置</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="project-name">资质文件审查</div>
+              </td>
+              <td><span class="project-code">QUALIFY</span></td>
+              <td><span class="badge info">人工审核</span></td>
+              <td>32</td>
+              <td>68.2%</td>
+              <td><span class="badge warning">已暂停</span></td>
+              <td>2023-09-10</td>
+              <td class="action-links">
+                <a href="#">详情</a>
+                <a href="#">启用</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Project Modal -->
+  <div class="modal-overlay" id="createModal" style="display: none;" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal" style="width: 520px;">
+      <div class="modal-header">
+        <span class="modal-title">新建项目</span>
+        <div class="modal-close" onclick="this.closest('.modal-overlay').style.display='none'">×</div>
+      </div>
+
+      <div class="modal-form">
+        <div class="form-group full">
+          <label>项目名称 <span style="color: var(--danger);">*</span></label>
+          <input type="text" class="form-control" placeholder="请输入项目名称">
+        </div>
+        <div class="form-group">
+          <label>项目代码 <span style="color: var(--danger);">*</span></label>
+          <input type="text" class="form-control" placeholder="如: biz_auth">
+        </div>
+        <div class="form-group">
+          <label>审核模式</label>
+          <select class="form-control">
+            <option value="auto">自动审核</option>
+            <option value="manual">人工审核</option>
+            <option value="mixed" selected>混合模式</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>需要人工复核</label>
+          <select class="form-control">
+            <option>是</option>
+            <option>否</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>自动通过规则</label>
+          <select class="form-control">
+            <option>全部自动通过</option>
+            <option>仅高置信度</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>项目描述</label>
+          <input type="text" class="form-control" placeholder="简要描述项目用途">
+        </div>
+      </div>
+
+      <div class="config-tips">
+        <strong>💡 审核模式说明</strong>
+        自动审核：提交数据后立即执行规则，返回结果<br>
+        人工审核：所有数据需审核员人工确认<br>
+        混合模式：规则通过自动放行，触发复核规则则需人工确认
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').style.display='none'">取消</button>
+        <button class="btn btn-primary">创建项目</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

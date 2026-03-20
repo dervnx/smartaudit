@@ -1,0 +1,157 @@
+<!-- SmartAudit MVP - 工作台 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工作台 - SmartAudit MVP</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .welcome-banner { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: #fff; padding: 24px 28px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .welcome-banner h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .welcome-banner p { font-size: 13px; opacity: 0.85; }
+    .version-tag { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 12px; font-size: 12px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .stats-row .stat-card { text-align: left; padding: 16px 20px; }
+    .stats-row .value { font-size: 26px; }
+    .stats-row .label { font-size: 12px; margin-top: 4px; }
+    .stats-row .sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .quick-btn { background: #f8f9fa; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .quick-btn:hover { background: var(--primary-light); }
+    .quick-btn .icon { font-size: 24px; margin-bottom: 6px; }
+    .quick-btn .label { font-size: 13px; color: var(--text-secondary); }
+    table td .project-name { font-weight: 500; }
+    table td .project-code { font-size: 11px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">SmartAudit MVP</div>
+    <div class="header-right">
+      <span>2024-01-15</span>
+      <div class="avatar">管</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="menu-item active">📊 工作台</div>
+      <div class="menu-item">📁 项目管理</div>
+      <div class="menu-item">📋 审核任务</div>
+      <div class="menu-item">📈 数据统计</div>
+    </div>
+
+    <div class="main">
+      <div class="welcome-banner">
+        <div>
+          <h2>早上好，管理员</h2>
+          <p>欢迎使用 SmartAudit 智核审核系统 MVP 版本</p>
+        </div>
+        <div class="version-tag">MVP v1.0</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="value" style="color: var(--primary);">3</div>
+          <div class="label">总项目数</div>
+          <div class="sub">2 个运行中</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color: var(--success);">1,256</div>
+          <div class="label">今日审核量</div>
+          <div class="sub">通过率 89.2%</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color: var(--warning);">23</div>
+          <div class="label">待处理任务</div>
+          <div class="sub">需人工复核</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color: var(--text);">8</div>
+          <div class="label">规则总数</div>
+          <div class="sub">全部启用</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">快捷操作</div>
+        <div class="quick-actions">
+          <div class="quick-btn">
+            <div class="icon">📁</div>
+            <div class="label">新建项目</div>
+          </div>
+          <div class="quick-btn">
+            <div class="icon">📋</div>
+            <div class="label">审核任务</div>
+          </div>
+          <div class="quick-btn">
+            <div class="icon">📊</div>
+            <div class="label">查看报表</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div class="section-title" style="margin-bottom: 0;">最新审核记录</div>
+          <a href="#" style="font-size: 12px;">查看全部 →</a>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>任务ID</th>
+              <th>项目</th>
+              <th>状态</th>
+              <th>结果</th>
+              <th>提交时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#10234</td>
+              <td>
+                <div class="project-name">企业认证审核</div>
+                <div class="project-code">BIZ_AUTH</div>
+              </td>
+              <td><span class="badge success">通过</span></td>
+              <td>自动审核</td>
+              <td>10:23</td>
+            </tr>
+            <tr>
+              <td>#10233</td>
+              <td>
+                <div class="project-name">合同文本审核</div>
+                <div class="project-code">CONTRACT</div>
+              </td>
+              <td><span class="badge warning">复核</span></td>
+              <td>需人工确认</td>
+              <td>09:45</td>
+            </tr>
+            <tr>
+              <td>#10232</td>
+              <td>
+                <div class="project-name">企业认证审核</div>
+                <div class="project-code">BIZ_AUTH</div>
+              </td>
+              <td><span class="badge danger">驳回</span></td>
+              <td>规则触发</td>
+              <td>09:30</td>
+            </tr>
+            <tr>
+              <td>#10231</td>
+              <td>
+                <div class="project-name">资质文件审查</div>
+                <div class="project-code">QUALIFY</div>
+              </td>
+              <td><span class="badge success">通过</span></td>
+              <td>自动审核</td>
+              <td>09:15</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

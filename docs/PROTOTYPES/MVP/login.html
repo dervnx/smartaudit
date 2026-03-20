@@ -1,0 +1,66 @@
+<!-- SmartAudit MVP - 登录页 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - SmartAudit MVP</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-page { min-height: 100vh; display: flex; }
+    .login-left { width: 55%; background: linear-gradient(135deg, #1a73e8, #0d47a1); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 60px; }
+    .login-left h1 { font-size: 40px; margin-bottom: 12px; }
+    .login-left p { font-size: 15px; opacity: 0.9; text-align: center; line-height: 1.7; max-width: 360px; }
+    .login-right { width: 45%; display: flex; flex-direction: column; justify-content: center; padding: 60px; }
+    .login-box { max-width: 320px; margin: 0 auto; width: 100%; }
+    .login-box h2 { font-size: 24px; color: var(--text); margin-bottom: 6px; }
+    .login-box .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+    .login-box .btn { width: 100%; height: 44px; font-size: 15px; margin-top: 20px; }
+    .footer { position: fixed; bottom: 20px; left: 0; right: 0; text-align: center; font-size: 12px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-left">
+      <h1>SmartAudit</h1>
+      <p>智核智能审核系统<br>最小可行产品 · 核心审核工作流</p>
+    </div>
+
+    <div class="login-right">
+      <div class="login-box">
+        <h2>管理员登录</h2>
+        <p class="sub">请输入账户信息登录系统</p>
+
+        <form>
+          <div class="form-group">
+            <label>用户名</label>
+            <input type="text" class="form-control" value="admin" placeholder="请输入用户名">
+          </div>
+
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" class="form-control" value="Admin123!" placeholder="请输入密码">
+          </div>
+
+          <div class="form-group">
+            <label>验证码</label>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" class="form-control" value="ABCD" placeholder="请输入" style="flex: 1;">
+              <div style="width: 90px; height: 38px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999;">&#x7B7E;&#x540D;&#x9A23;&#x9A8B;</div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary login-box .btn">登 录</button>
+
+          <div style="display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px;">
+            <a href="#">忘记密码？</a>
+            <a href="#">联系管理员</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2024 SmartAudit 智核. 保留所有权利.</div>
+</body>
+</html>
