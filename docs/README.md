@@ -14,7 +14,7 @@ docs/
 │   ├── CSS/
 │   │   └── css_standard.md            # CSS 样式规范
 │   ├── DB/
-│   │   └── sql_standard.md            # SQL 规范（PostgreSQL/MySQL）
+│   │   └── sql_standard.md            # SQL 规范（PostgreSQL）
 │   └── API/
 │       └── api_design_standard.md     # API 设计规范
 │
@@ -22,12 +22,37 @@ docs/
 │   ├── SYSTEM/
 │   │   └── system_architecture.md      # 系统架构设计
 │   ├── TENANT/
-│   │   ├── tenant_db.md               # 租户系统数据库设计
-│   │   └── tenant_api.md              # 租户系统 API 设计
+│   │   └── tenant_db.md               # 租户系统数据库设计
 │   ├── TESTING/
 │   │   └── testing_standard.md        # 测试规范与测试用例
 │   └── DEPLOY/
 │       └── deployment_detailed.md      # 部署详细操作手册
+│
+├── SAAS/                         # SaaS 管理平台文档
+│   ├── SAAS_API.md               # SaaS API 规范
+│   ├── SAAS_SYSTEM.md            # SaaS 系统设计
+│   ├── SAAS_DB.md                # SaaS 数据库设计
+│   └── SAAS_DEPLOY.md            # SaaS 部署文档
+│
+├── TENANT/                       # 租户系统文档
+│   ├── TENANT_API.md             # 租户 API 规范
+│   ├── TENANT_SYSTEM.md          # 租户系统设计
+│   ├── TENANT_DB.md              # 租户数据库设计
+│   ├── TENANT_DEPLOY.md          # 租户部署文档
+│   ├── TENANT_BACKUP.md          # 租户备份管理
+│   └── TENANT_VERSION.md         # 租户版本管理
+│
+├── PRD/                          # 产品需求文档
+│   ├── OVERVIEW.md               # 产品概述
+│   ├── FUNCTION_MAP.md           # 功能地图
+│   ├── SAAS_ADMIN_PRD.md         # SaaS 管理后台 PRD
+│   ├── TENANT_ADMIN_PRD.md       # 租户后台 PRD
+│   └── VERSION_PLAN.md           # 版本规划
+│
+├── SHARED/                       # 共享文档
+│   ├── AUTH_DESIGN.md            # 认证授权设计
+│   ├── COMMON_TYPES.md           # 公共数据类型
+│   └── REDIS_DESIGN.md           # Redis 设计
 │
 ├── PROTOTYPES/                   # 原型设计
 │   ├── SAAS/
@@ -75,7 +100,7 @@ docs/
 |------|----------|
 | 前端 | React 18 + TypeScript + Vite + Ant Design |
 | 后端 | Python 3.11 + FastAPI + SQLAlchemy 2.x + Pydantic 2.x |
-| 数据库 | PostgreSQL 15+ / MySQL 8.0 |
+| 数据库 | PostgreSQL 15+ |
 | 缓存/队列 | Redis 7+ + Celery |
 | 文件存储 | MinIO / S3 / OSS |
 | 容器化 | Docker + Docker Compose |

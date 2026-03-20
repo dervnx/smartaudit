@@ -1,5 +1,202 @@
 # 部署详细操作手册
 
+## 0. MVP 最小化部署（核心审核功能）
+
+> 本章节为 MVP（最小可行产品）快速启动指南，仅包含运行核心审核功能所需的最低配置。
+
+### 0.1 MVP 架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      MVP 最小架构                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌─────────────┐        ┌─────────────┐                    │
+│   │   Nginx     │───────▶│  FastAPI    │                    │
+│   │  (反向代理)  │        │  (应用服务)  │                    │
+│   └─────────────┘        └──────┬──────┘                    │
+│                                  │                           │
+│                    ┌─────────────┼─────────────┐            │
+│                    ▼             ▼             ▼            │
+│              ┌─────────┐  ┌─────────┐  ┌─────────┐         │
+│              │PostgreSQL│  │  Redis  │  │ Celery  │         │
+│              │ (主库)   │  │ (缓存)   │  │ (异步)  │         │
+│              └─────────┘  └─────────┘  └─────────┘         │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 0.2 快速启动（Docker Compose）
+
+```bash
+# 1. 创建工作目录
+mkdir -p /opt/smartaudit && cd /opt/smartaudit
+
+# 2. 创建 docker-compose.yml
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+
+  api:
+    image: smartaudit/api:latest
+    environment:
+      - DATABASE_URL=postgresql://smartaudit:password@db:5432/smartaudit
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=smartaudit
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=smartaudit
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  celery:
+    image: smartaudit/api:latest
+    command: celery -A app.tasks worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://smartaudit:password@db:5432/smartaudit
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+
+volumes:
+  pg_data:
+EOF
+
+# 3. 创建 Nginx 配置
+cat > nginx.conf << 'EOF'
+events {
+    worker_connections 1024;
+}
+
+http {
+    upstream api {
+        server api:8000;
+    }
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+            proxy_pass http://api;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /api/ {
+            proxy_pass http://api/api/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+}
+EOF
+
+# 4. 启动服务
+docker-compose up -d
+
+# 5. 验证服务
+curl http://localhost/api/v1/health
+```
+
+### 0.3 初始化数据库
+
+```bash
+# 进入 API 容器
+docker-compose exec api bash
+
+# 初始化数据库（创建表结构）
+alembic upgrade head
+
+# 创建初始管理员账户
+python -m app.scripts.create_admin \
+  --username admin \
+  --password Admin123! \
+  --name "系统管理员"
+
+# 退出容器
+exit
+```
+
+### 0.4 核心功能验证
+
+```bash
+# 1. 登录获取 Token
+curl -X POST http://localhost/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Admin123!"}'
+
+# 2. 创建项目
+curl -X POST http://localhost/api/v1/projects \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "测试项目",
+    "code": "test001",
+    "audit_config": {
+      "mode": "auto",
+      "need_manual_review": false
+    }
+  }'
+
+# 3. 提交审核数据
+curl -X POST http://localhost/api/v1/audit/submit \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "<PROJECT_ID>",
+    "input_data": {"name": "张三", "id_card": "110101199001011234"}
+  }'
+
+# 4. 查询审核结果
+curl -X GET http://localhost/api/v1/audit/pending \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+### 0.5 MVP 最小配置要求
+
+| 组件 | 最低配置 | 说明 |
+|------|----------|------|
+| 服务器 | 2核4G | 仅支持少量并发 |
+| PostgreSQL | 15+ | 主数据库 |
+| Redis | 7+ | 缓存 + 消息队列 |
+| Nginx | latest | 反向代理 |
+
+### 0.6 停止服务
+
+```bash
+# 停止服务（保留数据）
+docker-compose stop
+
+# 完全清除（删除数据）
+docker-compose down -v
+```
+
+---
+
 ## 1. 环境准备
 
 ### 1.1 服务器要求
@@ -10,11 +207,11 @@
 | 内存 | 8 GB | 16 GB |
 | 系统盘 | 100 GB SSD | 200 GB SSD |
 | 数据盘 | 500 GB | 1 TB SSD |
-| 操作系统 | Ubuntu 20.04+ / Debian 11+ | Ubuntu 22.04 |
+| 操作系统 | Debian 11+ | Debian 12 |
 
 ### 1.2 安装基础软件
 
-#### Ubuntu/Debian 系统初始化
+#### Debian 系统初始化
 
 ```bash
 # 更新系统包
@@ -47,28 +244,9 @@ docker-compose --version
 # 输出：Docker Compose version v2.20.0
 ```
 
-#### CentOS/RHEL 系统初始化
-
-```bash
-# 更新系统包
-sudo yum update -y
-
-# 安装基础软件
-sudo yum install -y curl wget git vim htop net-tools
-
-# 安装 Docker
-sudo yum install -y docker
-sudo systemctl start docker
-sudo systemctl enable docker
-
-# 安装 Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-
 ## 2. 数据库安装与配置
 
-### 2.1 PostgreSQL 安装（Ubuntu/Debian）
+### 2.1 PostgreSQL 安装（Debian）
 
 ```bash
 # 安装 PostgreSQL
@@ -135,34 +313,9 @@ SELECT version();
 \q
 ```
 
-### 2.3 MySQL 安装（可选）
-
-```bash
-# 安装 MySQL
-sudo apt install -y mysql-server
-
-# 启动 MySQL
-sudo systemctl start mysql
-sudo systemctl enable mysql
-
-# 安全初始化
-sudo mysql_secure_installation
-
-# 登录 MySQL
-sudo mysql
-
-# 创建数据库和用户
-CREATE DATABASE smartaudit CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'smartaudit_user'@'%' IDENTIFIED BY 'YourStrongPassword123!';
-GRANT ALL PRIVILEGES ON smartaudit.* TO 'smartaudit_user'@'%';
-FLUSH PRIVILEGES;
-
-\q
-```
-
 ## 3. Redis 安装
 
-### 3.1 Redis 安装（Ubuntu/Debian）
+### 3.1 Redis 安装（Debian）
 
 ```bash
 # 安装 Redis
