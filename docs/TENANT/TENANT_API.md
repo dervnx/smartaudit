@@ -26,10 +26,10 @@ interface LoginRequest {
 **响应**:
 ```typescript
 interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  tokenType: 'Bearer';
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: 'Bearer';
   user: {
     id: string;
     username: string;
@@ -62,8 +62,8 @@ PUT /api/v1/auth/password
 **请求参数**:
 ```typescript
 interface ChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
+  old_password: string;
+  new_password: string;
 }
 ```
 
@@ -81,10 +81,10 @@ GET /api/v1/accounts
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | page | int | 页码 |
-| pageSize | int | 每页数量 |
+| page_size | int | 每页数量 |
 | keyword | string | 搜索关键词 |
 | status | string | 状态筛选 |
-| roleId | string | 角色筛选 |
+| role_id | string | 角色筛选 |
 
 **响应**:
 ```typescript
@@ -94,7 +94,7 @@ interface AccountListResponse {
     items: Account[];
     total: number;
     page: number;
-    pageSize: number;
+    page_size: number;
   };
 }
 
@@ -107,7 +107,7 @@ interface Account {
   avatar?: string;
   roles: Role[];
   status: 'active' | 'inactive';
-  lastLoginAt?: string;
+  last_login_at?: string;
   created_at: string;
 }
 ```
@@ -126,8 +126,8 @@ interface CreateAccountRequest {
   name: string;
   email?: string;
   phone?: string;
-  roleIds: string[];
-  extraPermissions?: string[];
+  role_ids: string[];
+  extra_permissions?: string[];
   status?: 'active' | 'inactive';
 }
 ```
@@ -170,7 +170,7 @@ PUT /api/v1/accounts/{id}/roles
 **请求参数**:
 ```typescript
 interface AssignRolesRequest {
-  roleIds: string[];
+  role_ids: string[];
 }
 ```
 
@@ -183,8 +183,8 @@ PUT /api/v1/accounts/{id}/permissions
 **请求参数**:
 ```typescript
 interface ConfigurePermissionsRequest {
-  extraPermissions: string[];
-  removePermissions?: string[];
+  extra_permissions: string[];
+  remove_permissions?: string[];
 }
 ```
 
@@ -233,7 +233,7 @@ interface MyPermissionsResponse {
   data: {
     roles: string[];
     permissions: string[];
-    roleDetails: {
+    role_details: {
       code: string;
       name: string;
       permissions: string[];
@@ -264,8 +264,8 @@ interface Role {
   name: string;
   code: string;
   description?: string;
-  isSystem: boolean;
-  userCount: number;
+  is_system: boolean;
+  user_count: number;
   permissions: string[];
   created_at: string;
 }
@@ -283,7 +283,7 @@ interface CreateRoleRequest {
   name: string;
   code: string;
   description?: string;
-  permissionIds?: string[];
+  permission_ids?: string[];
 }
 ```
 
@@ -332,7 +332,7 @@ GET /api/v1/projects
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | page | int | 页码 |
-| pageSize | int | 每页数量 |
+| page_size | int | 每页数量 |
 | keyword | string | 搜索关键词 |
 | status | string | 状态筛选 |
 
@@ -348,18 +348,18 @@ interface CreateProjectRequest {
   name: string;
   code: string;
   description?: string;
-  fieldsDef: FieldDefinition[];
-  ruleIds?: string[];
-  needManualReview?: boolean;
-  taskAssignType?: 'round_robin' | 'load_balance' | 'efficiency' | 'random' | 'manual';
+  fields_def: FieldDefinition[];
+  rule_ids?: string[];
+  need_manual_review?: boolean;
+  task_assign_type?: 'round_robin' | 'load_balance' | 'efficiency' | 'random' | 'manual';
 }
 
 interface FieldDefinition {
   name: string;
   label: string;
   type: 'string' | 'number' | 'boolean' | 'date' | 'datetime' |
-        'select' | 'multiSelect' | 'file' | 'image' |
-        'region' | 'tags' | 'idCard' | 'phone' | 'email';
+        'select' | 'multi_select' | 'file' | 'image' |
+        'region' | 'tags' | 'id_card' | 'phone' | 'email';
   required?: boolean;
   options?: string[];
   default?: any;
@@ -396,23 +396,23 @@ GET /api/v1/projects/{id}/statistics
 interface ProjectStatisticsResponse {
   code: 0;
   data: {
-    totalData: number;
-    pendingData: number;
-    inProgressData: number;
-    passedData: number;
-    rejectedData: number;
-    recheckingData: number;
-    progressRate: number;
-    auditorWorkload: {
-      auditorId: string;
-      auditorName: string;
-      completedCount: number;
+    total_data: number;
+    pending_data: number;
+    in_progress_data: number;
+    passed_data: number;
+    rejected_data: number;
+    rechecking_data: number;
+    progress_rate: number;
+    auditor_workload: {
+      auditor_id: string;
+      auditor_name: string;
+      completed_count: number;
     }[];
-    rejectReasonDistribution: {
+    reject_reason_distribution: {
       reason: string;
       count: number;
     }[];
-    avgDuration: number;
+    avg_duration: number;
   };
 }
 ```
@@ -439,9 +439,9 @@ interface CreateRuleRequest {
   name: string;
   description?: string;
   conditions: ConditionGroup;
-  resultPass?: string;
-  resultReject?: string;
-  resultSuggest?: string;
+  result_pass?: string;
+  result_reject?: string;
+  result_suggest?: string;
   priority?: number;
 }
 
@@ -454,7 +454,7 @@ interface Condition {
   field: string;
   operator: 'equals' | 'notEquals' | 'contains' | 'greaterThan' |
             'lessThan' | 'between' | 'in' | 'notIn' | 'isEmpty' |
-            'isNotEmpty' | 'matches' | 'idCardValid' | 'educationVerify';
+            'isNotEmpty' | 'matches' | 'id_cardValid' | 'educationVerify';
   value: any;
 }
 ```
@@ -487,7 +487,7 @@ POST /api/v1/rules/test
 ```typescript
 interface TestRuleRequest {
   conditions: ConditionGroup;
-  testData: Record<string, any>;
+  test_data: Record<string, any>;
 }
 ```
 
@@ -497,8 +497,8 @@ interface TestRuleResponse {
   code: 0;
   data: {
     passed: boolean;
-    matchedConditions: string[];
-    unmatchedConditions: string[];
+    matched_conditions: string[];
+    unmatched_conditions: string[];
     result: 'pass' | 'reject';
   };
 }
@@ -518,8 +518,8 @@ GET /api/v1/audit/pending
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | page | int | 页码 |
-| pageSize | int | 每页数量 |
-| projectId | string | 项目ID |
+| page_size | int | 每页数量 |
+| project_id | string | 项目ID |
 
 **响应**:
 ```typescript
@@ -528,18 +528,18 @@ interface PendingAuditResponse {
   data: {
     items: AuditData[];
     total: number;
-    pendingCount: number;
+    pending_count: number;
     page: number;
-    pageSize: number;
+    page_size: number;
   };
 }
 
 interface AuditData {
   id: string;
-  projectId: string;
-  projectName: string;
-  inputData: Record<string, any>;
-  autoResult?: 'pass' | 'reject' | 'pending';
+  project_id: string;
+  project_name: string;
+  input_data: Record<string, any>;
+  auto_result?: 'pass' | 'reject' | 'pending';
   status: 'pending' | 'in_progress' | 'passed' | 'rejected' | 'rechecking';
   priority: number;
   created_at: string;
@@ -561,8 +561,8 @@ POST /api/v1/audit/submit
 **请求参数**:
 ```typescript
 interface SubmitAuditRequest {
-  projectId: string;
-  inputData: Record<string, any>;
+  project_id: string;
+  input_data: Record<string, any>;
   priority?: number;
 }
 ```
@@ -593,24 +593,24 @@ interface AuditDetailResponse {
   code: 0;
   data: {
     id: string;
-    projectId: string;
-    projectName: string;
-    inputData: Record<string, any>;
-    ruleResult: {
+    project_id: string;
+    project_name: string;
+    input_data: Record<string, any>;
+    rule_result: {
       passed: boolean;
       conditions: ConditionResult[];
       conclusion: string;
     };
-    autoResult?: string;
-    finalResult?: string;
-    auditorId?: string;
-    auditorName?: string;
-    auditTime?: string;
-    auditNote?: string;
-    needRecheck: boolean;
-    recheckAuditorId?: string;
-    recheckTime?: string;
-    recheckResult?: string;
+    auto_result?: string;
+    final_result?: string;
+    auditor_id?: string;
+    auditor_name?: string;
+    audit_time?: string;
+    audit_note?: string;
+    need_recheck: boolean;
+    recheck_auditor_id?: string;
+    recheck_time?: string;
+    recheck_result?: string;
     status: string;
     created_at: string;
   };
@@ -641,14 +641,14 @@ GET /api/v1/tasks/my
 interface MyTasksResponse {
   code: 0;
   data: {
-    pendingCount: number;
-    recheckCount: number;
-    todayCompleted: number;
-    weekCompleted: number;
-    monthCompleted: number;
-    yearCompleted: number;
-    totalCompleted: number;
-    avgDuration: number;
+    pending_count: number;
+    recheck_count: number;
+    today_completed: number;
+    week_completed: number;
+    month_completed: number;
+    year_completed: number;
+    total_completed: number;
+    avg_duration: number;
   };
 }
 ```
@@ -663,9 +663,9 @@ GET /api/v1/tasks
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | page | int | 页码 |
-| pageSize | int | 每页数量 |
+| page_size | int | 每页数量 |
 | status | string | 任务状态 |
-| auditorId | string | 审核员ID |
+| auditor_id | string | 审核员ID |
 | type | string | review/recheck |
 
 ### 8.3 开始任务
@@ -719,16 +719,16 @@ interface CreateThirdPartyConfigRequest {
   url: string;
   method?: 'GET' | 'POST';
   headers?: Record<string, string>;
-  paramsTemplate?: Record<string, any>;
-  authType?: 'none' | 'bearer' | 'oauth2' | 'api_key';
-  authConfig?: {
-    tokenUrl?: string;
-    clientId?: string;
-    clientSecret?: string;
-    apiKey?: string;
+  params_template?: Record<string, any>;
+  auth_type?: 'none' | 'bearer' | 'oauth2' | 'api_key';
+  auth_config?: {
+    token_url?: string;
+    client_id?: string;
+    client_secret?: string;
+    api_key?: string;
   };
   timeout?: number;
-  retryCount?: number;
+  retry_count?: number;
 }
 ```
 
@@ -755,15 +755,15 @@ GET /api/v1/third-party/statistics
 interface ThirdPartyStatisticsResponse {
   code: 0;
   data: {
-    totalCalls: number;
-    monthCalls: number;
-    todayCalls: number;
-    successRate: number;
-    avgResponseTime: number;
-    callRanking: {
-      configId: string;
-      configName: string;
-      callCount: number;
+    total_calls: number;
+    month_calls: number;
+    today_calls: number;
+    success_rate: number;
+    avg_response_time: number;
+    call_ranking: {
+      config_id: string;
+      config_name: string;
+      call_count: number;
     }[];
   };
 }
@@ -811,15 +811,15 @@ POST /api/v1/backup/rules
 ```typescript
 interface CreateBackupRuleRequest {
   name: string;
-  backupType: 'full' | 'differential' | 'incremental';
-  scheduleCron: string;
-  retentionDays: number;
-  storageLocation: 'local' | 's3' | 'oss';
-  storageConfig?: {
+  backup_type: 'full' | 'differential' | 'incremental';
+  schedule_cron: string;
+  retention_days: number;
+  storage_location: 'local' | 's3' | 'oss';
+  storage_config?: {
     bucket?: string;
     endpoint?: string;
-    accessKey?: string;
-    secretKey?: string;
+    access_key?: string;
+    secret_key?: string;
   };
 }
 ```
@@ -851,8 +851,8 @@ POST /api/v1/backup/execute
 **请求参数**:
 ```typescript
 interface ExecuteBackupRequest {
-  ruleId?: string;
-  backupType?: 'full' | 'differential' | 'incremental';
+  rule_id?: string;
+  backup_type?: 'full' | 'differential' | 'incremental';
 }
 ```
 
@@ -878,11 +878,11 @@ interface CurrentVersionResponse {
   code: 0;
   data: {
     version: string;
-    versionCode: number;
-    lastCheckAt: string;
-    lastUpdateAt: string;
-    autoUpdateEnabled: boolean;
-    updateStatus: 'idle' | 'checking' | 'downloading' | 'upgrading';
+    version_code: number;
+    last_check_at: string;
+    last_update_at: string;
+    auto_update_enabled: boolean;
+    update_status: 'idle' | 'checking' | 'downloading' | 'upgrading';
   };
 }
 ```
@@ -902,8 +902,8 @@ POST /api/v1/version/upgrade
 **请求参数**:
 ```typescript
 interface ExecuteUpgradeRequest {
-  targetVersion: string;
-  createBackup?: boolean;
+  target_version: string;
+  create_backup?: boolean;
 }
 ```
 

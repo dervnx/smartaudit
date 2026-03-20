@@ -65,8 +65,8 @@ interface PaginatedResponse<T = any> {
     items: T[];
     total: number;       // 总数
     page: number;         // 当前页
-    pageSize: number;     // 每页数量
-    totalPages: number;  // 总页数
+    page_size: number;     // 每页数量
+    total_pages: number;  // 总页数
   };
   timestamp: number;
 }
@@ -79,7 +79,7 @@ interface ErrorResponse {
   code: number;
   message: string;
   details?: any;
-  requestId?: string;
+  request_id?: string;
   timestamp: number;
 }
 ```
@@ -106,12 +106,12 @@ interface UserBase {
 
 ```typescript
 interface User extends UserBase {
-  tenantId?: UUID;        // 租户ID (租户用户)
+  tenant_id?: UUID;        // 租户ID (租户用户)
   roles: Role[];
   permissions: string[];  // 权限code列表
-  extraPermissions?: string[];  // 额外权限
-  lastLoginAt?: DateTime;
-  lastLoginIp?: string;
+  extra_permissions?: string[];  // 额外权限
+  last_login_at?: DateTime;
+  last_login_ip?: string;
 }
 ```
 
@@ -123,9 +123,9 @@ interface Role {
   name: string;          // 角色名称
   code: string;          // 角色代码
   description?: string;
-  isSystem: boolean;     // 是否系统内置
+  is_system: boolean;     // 是否系统内置
   permissions: string[]; // 权限列表
-  userCount?: number;
+  user_count?: number;
 }
 ```
 
@@ -136,14 +136,14 @@ interface LoginRequest {
   username: string;
   password: string;
   captcha?: string;
-  captchaKey?: string;
+  captcha_key?: string;
 }
 
 interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  tokenType: 'Bearer';
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: 'Bearer';
   user: User;
 }
 ```
@@ -152,8 +152,8 @@ interface LoginResponse {
 
 ```typescript
 interface ChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
+  old_password: string;
+  new_password: string;
 }
 
 interface ResetPasswordRequest {
@@ -171,16 +171,16 @@ interface Tenant {
   id: UUID;
   name: string;
   code: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
   address?: string;
-  logoUrl?: string;
-  appId: string;
-  packageType: 'basic' | 'professional' | 'enterprise';
-  deployMode: 'saas' | 'dedicated';
-  serviceStartDate: Date;
-  serviceEndDate: Date;
+  logo_url?: string;
+  app_id: string;
+  package_type: 'basic' | 'professional' | 'enterprise';
+  deploy_mode: 'saas' | 'dedicated';
+  service_start_date: Date;
+  service_end_date: Date;
   status: 'active' | 'inactive' | 'expired';
   created_at: DateTime;
   updated_at: DateTime;
@@ -191,12 +191,12 @@ interface Tenant {
 
 ```typescript
 interface TenantStatistics {
-  userCount: number;
-  projectCount: number;
-  totalAuditData: number;
-  monthAuditData: number;
-  todayAuditData: number;
-  pendingAuditData: number;
+  user_count: number;
+  project_count: number;
+  total_audit_data: number;
+  month_audit_data: number;
+  today_audit_data: number;
+  pending_audit_data: number;
 }
 ```
 
@@ -214,8 +214,8 @@ interface FieldDefinition {
   default?: any;         // 默认值
   validation?: string;   // 正则校验
   placeholder?: string;
-  maxLength?: number;
-  minLength?: number;
+  max_length?: number;
+  min_length?: number;
   max?: number;
   min?: number;
 }
@@ -227,12 +227,12 @@ type FieldType =
   | 'date'
   | 'datetime'
   | 'select'
-  | 'multiSelect'
+  | 'multi_select'
   | 'file'
   | 'image'
   | 'region'
   | 'tags'
-  | 'idCard'
+  | 'id_card'
   | 'phone'
   | 'email';
 ```
@@ -242,16 +242,16 @@ type FieldType =
 ```typescript
 interface Project {
   id: UUID;
-  tenantId: UUID;
+  tenant_id: UUID;
   name: string;
   code: string;
   description?: string;
-  fieldsDef: FieldDefinition[];
-  ruleIds: UUID[];
-  needManualReview: boolean;
-  taskAssignType: TaskAssignType;
+  fields_def: FieldDefinition[];
+  rule_ids: UUID[];
+  need_manual_review: boolean;
+  task_assign_type: TaskAssignType;
   status: 'active' | 'inactive' | 'archived';
-  createdBy?: UUID;
+  created_by?: UUID;
   created_at: DateTime;
   updated_at: DateTime;
 }
@@ -268,22 +268,22 @@ type TaskAssignType =
 
 ```typescript
 interface ProjectStatistics {
-  totalData: number;
-  pendingData: number;
-  inProgressData: number;
-  passedData: number;
-  rejectedData: number;
-  recheckingData: number;
-  progressRate: number;
-  auditorWorkload: AuditorWorkload[];
-  rejectReasonDistribution: ReasonDistribution[];
-  avgDuration: number;  // 秒
+  total_data: number;
+  pending_data: number;
+  in_progress_data: number;
+  passed_data: number;
+  rejected_data: number;
+  rechecking_data: number;
+  progress_rate: number;
+  auditor_workload: AuditorWorkload[];
+  reject_reason_distribution: ReasonDistribution[];
+  avg_duration: number;  // 秒
 }
 
 interface AuditorWorkload {
-  auditorId: UUID;
-  auditorName: string;
-  completedCount: number;
+  auditor_id: UUID;
+  auditor_name: string;
+  completed_count: number;
 }
 
 interface ReasonDistribution {
@@ -320,7 +320,7 @@ type Operator =
   | 'isEmpty'
   | 'isNotEmpty'
   | 'matches'
-  | 'idCardValid'
+  | 'id_cardValid'
   | 'educationVerify'
   | 'degreeVerify';
 ```
@@ -339,16 +339,16 @@ interface ConditionGroup {
 ```typescript
 interface Rule {
   id: UUID;
-  tenantId: UUID;
+  tenant_id: UUID;
   name: string;
   description?: string;
   conditions: ConditionGroup;
-  resultPass?: string;
-  resultReject?: string;
-  resultSuggest?: string;
+  result_pass?: string;
+  result_reject?: string;
+  result_suggest?: string;
   priority: number;
   status: 'active' | 'inactive';
-  createdBy?: UUID;
+  created_by?: UUID;
   created_at: DateTime;
   updated_at: DateTime;
 }
@@ -382,22 +382,22 @@ interface ConditionResult {
 ```typescript
 interface AuditData {
   id: UUID;
-  tenantId: UUID;
-  projectId: UUID;
-  projectName?: string;
-  inputData: Record<string, any>;
-  ruleResult?: RuleResult;
-  autoResult?: 'pass' | 'reject' | 'pending';
-  finalResult?: 'pass' | 'reject' | 'recheck';
-  auditorId?: UUID;
-  auditorName?: string;
-  auditTime?: DateTime;
-  auditNote?: string;
-  needRecheck: boolean;
-  recheckAuditorId?: UUID;
-  recheckTime?: DateTime;
-  recheckResult?: 'pass' | 'reject';
-  recheckNote?: string;
+  tenant_id: UUID;
+  project_id: UUID;
+  project_name?: string;
+  input_data: Record<string, any>;
+  rule_result?: RuleResult;
+  auto_result?: 'pass' | 'reject' | 'pending';
+  final_result?: 'pass' | 'reject' | 'recheck';
+  auditor_id?: UUID;
+  auditor_name?: string;
+  audit_time?: DateTime;
+  audit_note?: string;
+  need_recheck: boolean;
+  recheck_auditor_id?: UUID;
+  recheck_time?: DateTime;
+  recheck_result?: 'pass' | 'reject';
+  recheck_note?: string;
   status: AuditStatus;
   priority: number;
   created_at: DateTime;
@@ -411,18 +411,18 @@ interface AuditData {
 ```typescript
 interface Task {
   id: UUID;
-  tenantId: UUID;
-  auditorId?: UUID;
-  auditorName?: string;
-  dataId: UUID;
+  tenant_id: UUID;
+  auditor_id?: UUID;
+  auditor_name?: string;
+  data_id: UUID;
   data?: AuditData;
   type: 'review' | 'recheck';
   status: TaskStatus;
   result?: 'pass' | 'reject';
   note?: string;
-  assignedAt?: DateTime;
-  startedAt?: DateTime;
-  completedAt?: DateTime;
+  assigned_at?: DateTime;
+  started_at?: DateTime;
+  completed_at?: DateTime;
   created_at: DateTime;
 }
 ```
@@ -431,14 +431,14 @@ interface Task {
 
 ```typescript
 interface TaskStatistics {
-  pendingCount: number;
-  recheckCount: number;
-  todayCompleted: number;
-  weekCompleted: number;
-  monthCompleted: number;
-  yearCompleted: number;
-  totalCompleted: number;
-  avgDuration: number;  // 秒
+  pending_count: number;
+  recheck_count: number;
+  today_completed: number;
+  week_completed: number;
+  month_completed: number;
+  year_completed: number;
+  total_completed: number;
+  avg_duration: number;  // 秒
 }
 ```
 
@@ -449,17 +449,17 @@ interface TaskStatistics {
 ```typescript
 interface ThirdPartyConfig {
   id: UUID;
-  tenantId: UUID;
+  tenant_id: UUID;
   name: string;
   type: ThirdPartyType;
   url: string;
   method: 'GET' | 'POST';
   headers?: Record<string, string>;
-  paramsTemplate?: Record<string, any>;
-  authType: 'none' | 'bearer' | 'oauth2' | 'api_key';
-  authConfig?: AuthConfig;
+  params_template?: Record<string, any>;
+  auth_type: 'none' | 'bearer' | 'oauth2' | 'api_key';
+  auth_config?: AuthConfig;
   timeout: number;
-  retryCount: number;
+  retry_count: number;
   status: 'active' | 'inactive';
   created_at: DateTime;
 }
@@ -472,10 +472,10 @@ type ThirdPartyType =
   | 'OPERATOR_VERIFY';    // 运营商验证
 
 interface AuthConfig {
-  tokenUrl?: string;
-  clientId?: string;
-  clientSecret?: string;
-  apiKey?: string;
+  token_url?: string;
+  client_id?: string;
+  client_secret?: string;
+  api_key?: string;
 }
 ```
 
@@ -484,18 +484,18 @@ interface AuthConfig {
 ```typescript
 interface ThirdPartyLog {
   id: UUID;
-  tenantId: UUID;
-  configId: UUID;
-  configName?: string;
-  userId?: UUID;
-  requestTime: DateTime;
-  requestUrl: string;
-  requestMethod: string;
-  requestData?: Record<string, any>;
-  responseData?: Record<string, any>;
-  responseStatus: 'success' | 'failed';
-  errorMsg?: string;
-  durationMs: number;
+  tenant_id: UUID;
+  config_id: UUID;
+  config_name?: string;
+  user_id?: UUID;
+  request_time: DateTime;
+  request_url: string;
+  request_method: string;
+  request_data?: Record<string, any>;
+  response_data?: Record<string, any>;
+  response_status: 'success' | 'failed';
+  error_msg?: string;
+  duration_ms: number;
 }
 ```
 
@@ -503,18 +503,18 @@ interface ThirdPartyLog {
 
 ```typescript
 interface ThirdPartyStatistics {
-  totalCalls: number;
-  monthCalls: number;
-  todayCalls: number;
-  successRate: number;
-  avgResponseTime: number;
-  callRanking: CallRanking[];
+  total_calls: number;
+  month_calls: number;
+  today_calls: number;
+  success_rate: number;
+  avg_response_time: number;
+  call_ranking: CallRanking[];
 }
 
 interface CallRanking {
-  configId: UUID;
-  configName: string;
-  callCount: number;
+  config_id: UUID;
+  config_name: string;
+  call_count: number;
 }
 ```
 
@@ -525,25 +525,25 @@ interface CallRanking {
 ```typescript
 interface BackupRule {
   id: UUID;
-  tenantId: UUID;
+  tenant_id: UUID;
   name: string;
-  backupType: BackupType;
-  scheduleCron: string;
-  retentionDays: number;
-  storageLocation: 'local' | 's3' | 'oss';
-  storageConfig?: StorageConfig;
-  isEnabled: boolean;
-  lastBackupAt?: DateTime;
-  nextBackupAt?: DateTime;
-  createdBy?: UUID;
+  backup_type: BackupType;
+  schedule_cron: string;
+  retention_days: number;
+  storage_location: 'local' | 's3' | 'oss';
+  storage_config?: StorageConfig;
+  is_enabled: boolean;
+  last_backup_at?: DateTime;
+  next_backup_at?: DateTime;
+  created_by?: UUID;
   created_at: DateTime;
 }
 
 interface StorageConfig {
   bucket?: string;
   endpoint?: string;
-  accessKey?: string;
-  secretKey?: string;
+  access_key?: string;
+  secret_key?: string;
   region?: string;
 }
 ```
@@ -553,16 +553,16 @@ interface StorageConfig {
 ```typescript
 interface BackupRecord {
   id: UUID;
-  tenantId: UUID;
-  ruleId?: UUID;
-  backupType: BackupType;
+  tenant_id: UUID;
+  rule_id?: UUID;
+  backup_type: BackupType;
   status: BackupStatus;
-  startedAt: DateTime;
-  completedAt?: DateTime;
-  filePath?: string;
-  fileSize?: number;      // 字节
+  started_at: DateTime;
+  completed_at?: DateTime;
+  file_path?: string;
+  file_size?: number;      // 字节
   checksum?: string;
-  errorMsg?: string;
+  error_msg?: string;
   created_at: DateTime;
 }
 ```
@@ -575,15 +575,15 @@ interface BackupRecord {
 interface SystemVersion {
   id: UUID;
   version: string;           // "1.2.3"
-  versionCode: number;       // 10203
-  releaseType: 'stable' | 'beta' | 'release';
-  releaseNotes?: string;
-  downloadUrl: string;
+  version_code: number;       // 10203
+  release_type: 'stable' | 'beta' | 'release';
+  release_notes?: string;
+  download_url: string;
   checksum: string;
-  isMandatory: boolean;
-  isEnabled: boolean;
-  minCompatibleVersion?: string;
-  publishedAt: DateTime;
+  is_mandatory: boolean;
+  is_enabled: boolean;
+  min_compatible_version?: string;
+  published_at: DateTime;
   created_at: DateTime;
 }
 ```
@@ -592,13 +592,13 @@ interface SystemVersion {
 
 ```typescript
 interface TenantVersion {
-  tenantId: UUID;
-  currentVersion: string;
-  currentVersionCode: number;
-  lastCheckAt?: DateTime;
-  lastUpdateAt?: DateTime;
-  autoUpdateEnabled: boolean;
-  updateStatus: UpgradeStatus;
+  tenant_id: UUID;
+  current_version: string;
+  current_version_code: number;
+  last_check_at?: DateTime;
+  last_update_at?: DateTime;
+  auto_update_enabled: boolean;
+  update_status: UpgradeStatus;
 }
 ```
 
@@ -607,17 +607,17 @@ interface TenantVersion {
 ```typescript
 interface UpgradeRecord {
   id: UUID;
-  tenantId: UUID;
-  fromVersion: string;
-  toVersion: string;
+  tenant_id: UUID;
+  from_version: string;
+  to_version: string;
   status: 'pending' | 'running' | 'success' | 'failed' | 'rollback';
-  backupId?: UUID;
-  errorMsg?: string;
-  rollbackNote?: string;
-  startedAt: DateTime;
-  completedAt?: DateTime;
-  operatedBy?: UUID;
-  operatedByName?: string;
+  backup_id?: UUID;
+  error_msg?: string;
+  rollback_note?: string;
+  started_at: DateTime;
+  completed_at?: DateTime;
+  operated_by?: UUID;
+  operated_by_name?: string;
 }
 ```
 
@@ -628,16 +628,16 @@ interface UpgradeRecord {
 ```typescript
 interface LoginLog {
   id: UUID;
-  tenantId?: UUID;
-  userId?: UUID;
-  loginTime: DateTime;
-  loginIp: string;
-  deviceType: 'pc_web' | 'mobile_h5' | 'mini_program' | 'ios_app' | 'android_app';
-  deviceId?: string;
+  tenant_id?: UUID;
+  user_id?: UUID;
+  login_time: DateTime;
+  login_ip: string;
+  device_type: 'pc_web' | 'mobile_h5' | 'mini_program' | 'ios_app' | 'android_app';
+  device_id?: string;
   os?: string;
   browser?: string;
-  loginResult: 'success' | 'failed';
-  failReason?: string;
+  login_result: 'success' | 'failed';
+  fail_reason?: string;
 }
 ```
 
@@ -646,17 +646,17 @@ interface LoginLog {
 ```typescript
 interface OperationLog {
   id: UUID;
-  tenantId: UUID;
-  userId?: UUID;
+  tenant_id: UUID;
+  user_id?: UUID;
   module: string;
   action: string;
   detail?: string;
-  entityType?: string;
-  entityId?: UUID;
+  entity_type?: string;
+  entity_id?: UUID;
   ip?: string;
-  requestData?: Record<string, any>;
+  request_data?: Record<string, any>;
   status: 'success' | 'failed';
-  errorMsg?: string;
+  error_msg?: string;
   created_at: DateTime;
 }
 ```

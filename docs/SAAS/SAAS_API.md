@@ -21,17 +21,17 @@ interface LoginRequest {
   username: string;    // 用户名
   password: string;    // 密码
   captcha?: string;    // 验证码
-  captchaKey?: string; // 验证码key
+  captcha_key?: string; // 验证码key
 }
 ```
 
 **响应**:
 ```typescript
 interface LoginResponse {
-  accessToken: string;      // Access Token
-  refreshToken: string;    // Refresh Token
-  expiresIn: number;       // 过期时间(秒)
-  tokenType: 'Bearer';
+  access_token: string;      // Access Token
+  refresh_token: string;    // Refresh Token
+  expires_in: number;       // 过期时间(秒)
+  token_type: 'Bearer';
   admin: {
     id: string;
     username: string;
@@ -81,7 +81,7 @@ interface GetMeResponse {
   avatar?: string;
   role: string;
   status: string;
-  lastLoginAt?: string;
+  last_login_at?: string;
   created_at: string;
 }
 ```
@@ -95,8 +95,8 @@ PUT /saas/api/v1/auth/password
 **请求参数**:
 ```typescript
 interface ChangePasswordRequest {
-  oldPassword: string;   // 旧密码
-  newPassword: string;   // 新密码 (8位以上，包含字母和数字)
+  old_password: string;   // 旧密码
+  new_password: string;   // 新密码 (8位以上，包含字母和数字)
 }
 ```
 
@@ -122,12 +122,12 @@ GET /saas/api/v1/tenants
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | page | int | 否 | 页码，默认1 |
-| pageSize | int | 否 | 每页数量，默认20 |
+| page_size | int | 否 | 每页数量，默认20 |
 | keyword | string | 否 | 搜索关键词 |
 | status | string | 否 | 状态筛选 |
-| packageType | string | 否 | 套餐筛选 |
-| startDate | string | 否 | 创建开始日期 |
-| endDate | string | 否 | 创建结束日期 |
+| package_type | string | 否 | 套餐筛选 |
+| start_date | string | 否 | 创建开始日期 |
+| end_date | string | 否 | 创建结束日期 |
 
 **响应**:
 ```typescript
@@ -137,8 +137,8 @@ interface TenantListResponse {
     items: Tenant[];
     total: number;
     page: number;
-    pageSize: number;
-    totalPages: number;
+    page_size: number;
+    total_pages: number;
   };
 }
 
@@ -146,19 +146,19 @@ interface Tenant {
   id: string;
   name: string;
   code: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
   address?: string;
-  logoUrl?: string;
-  appId: string;
-  packageType: 'basic' | 'professional' | 'enterprise';
-  deployMode: 'saas' | 'dedicated';
-  serviceStartDate: string;
-  serviceEndDate: string;
+  logo_url?: string;
+  app_id: string;
+  package_type: 'basic' | 'professional' | 'enterprise';
+  deploy_mode: 'saas' | 'dedicated';
+  service_start_date: string;
+  service_end_date: string;
   status: 'active' | 'inactive' | 'expired';
-  userCount: number;
-  projectCount: number;
+  user_count: number;
+  project_count: number;
   created_at: string;
 }
 ```
@@ -174,13 +174,13 @@ POST /saas/api/v1/tenants
 interface CreateTenantRequest {
   name: string;              // 租户名称
   code: string;              // 租户代码
-  contactName: string;        // 联系人姓名
-  contactEmail: string;       // 联系人邮箱
-  contactPhone: string;       // 联系人电话
+  contact_name: string;        // 联系人姓名
+  contact_email: string;       // 联系人邮箱
+  contact_phone: string;       // 联系人电话
   address?: string;           // 地址
-  packageType?: string;       // 套餐类型
-  serviceDays?: number;       // 服务天数
-  deployMode?: string;        // 部署模式
+  package_type?: string;       // 套餐类型
+  service_days?: number;       // 服务天数
+  deploy_mode?: string;        // 部署模式
 }
 ```
 
@@ -192,12 +192,12 @@ interface CreateTenantResponse {
     id: string;
     name: string;
     code: string;
-    appId: string;
-    appSecret: string;        // 仅此次返回，明文显示
-    packageType: string;
-    deployMode: string;
-    serviceStartDate: string;
-    serviceEndDate: string;
+    app_id: string;
+    app_secret: string;        // 仅此次返回，明文显示
+    package_type: string;
+    deploy_mode: string;
+    service_start_date: string;
+    service_end_date: string;
     status: string;
     created_at: string;
   };
@@ -224,27 +224,27 @@ interface TenantDetailResponse {
     id: string;
     name: string;
     code: string;
-    contactName: string;
-    contactEmail: string;
-    contactPhone: string;
+    contact_name: string;
+    contact_email: string;
+    contact_phone: string;
     address?: string;
-    logoUrl?: string;
+    logo_url?: string;
 
     // 服务信息
-    appId: string;
-    appSecretMasked: string;   // APPSECRET掩码
-    packageType: string;
-    deployMode: string;
-    serviceStartDate: string;
-    serviceEndDate: string;
+    app_id: string;
+    app_secret_masked: string;   // APPSECRET掩码
+    package_type: string;
+    deploy_mode: string;
+    service_start_date: string;
+    service_end_date: string;
     status: string;
 
     // 统计数据
     statistics: {
-      userCount: number;        // 用户数
-      projectCount: number;     // 项目数
-      totalAuditData: number;   // 累计审核数据
-      monthAuditData: number;   // 本月审核数据
+      user_count: number;        // 用户数
+      project_count: number;     // 项目数
+      total_audit_data: number;   // 累计审核数据
+      month_audit_data: number;   // 本月审核数据
     };
 
     // 时间信息
@@ -264,12 +264,12 @@ PUT /saas/api/v1/tenants/{id}
 ```typescript
 interface UpdateTenantRequest {
   name?: string;
-  contactName?: string;
-  contactEmail?: string;
-  contactPhone?: string;
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
   address?: string;
-  packageType?: string;
-  serviceEndDate?: string;
+  package_type?: string;
+  service_end_date?: string;
 }
 ```
 
@@ -310,8 +310,8 @@ POST /saas/api/v1/tenants/{id}/reset-secret
 interface ResetSecretResponse {
   code: 0;
   data: {
-    appId: string;
-    appSecret: string;        // 新APPSECRET，仅此次返回
+    app_id: string;
+    app_secret: string;        // 新APPSECRET，仅此次返回
   };
 }
 ```
@@ -330,8 +330,8 @@ GET /saas/api/v1/versions
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | page | int | 页码 |
-| pageSize | int | 每页数量 |
-| releaseType | string | 发布类型 |
+| page_size | int | 每页数量 |
+| release_type | string | 发布类型 |
 | status | string | enabled/disabled |
 
 **响应**:
@@ -342,27 +342,27 @@ interface VersionListResponse {
     items: SystemVersion[];
     total: number;
     page: number;
-    pageSize: number;
+    page_size: number;
   };
 }
 
 interface SystemVersion {
   id: string;
   version: string;           // "1.2.3"
-  versionCode: number;       // 10203
-  releaseType: string;        // stable/beta/release
-  releaseNotes: string;       // Markdown
-  downloadUrl: string;
+  version_code: number;       // 10203
+  release_type: string;        // stable/beta/release
+  release_notes: string;       // Markdown
+  download_url: string;
   checksum: string;
-  isMandatory: boolean;
-  isEnabled: boolean;
-  minCompatibleVersion?: string;
-  publishedAt: string;
+  is_mandatory: boolean;
+  is_enabled: boolean;
+  min_compatible_version?: string;
+  published_at: string;
   statistics: {
-    totalTenants: number;
-    upgradedTenants: number;
-    pendingUpgrades: number;
-    upgradeRate: number;
+    total_tenants: number;
+    upgraded_tenants: number;
+    pending_upgrades: number;
+    upgrade_rate: number;
   };
   created_at: string;
 }
@@ -378,14 +378,14 @@ POST /saas/api/v1/versions
 ```typescript
 interface CreateVersionRequest {
   version: string;              // 版本号 "1.2.3"
-  versionCode: number;          // 版本数字 10203
-  releaseType: string;         // stable/beta/release
-  releaseNotes: string;         // Markdown
-  downloadUrl: string;          // 下载地址
+  version_code: number;          // 版本数字 10203
+  release_type: string;         // stable/beta/release
+  release_notes: string;         // Markdown
+  download_url: string;          // 下载地址
   checksum: string;             // SHA256
-  isMandatory?: boolean;        // 是否强制更新
-  isEnabled?: boolean;          // 是否启用
-  minCompatibleVersion?: string;// 最低兼容版本
+  is_mandatory?: boolean;        // 是否强制更新
+  is_enabled?: boolean;          // 是否启用
+  min_compatible_version?: string;// 最低兼容版本
 }
 ```
 
@@ -404,11 +404,11 @@ PUT /saas/api/v1/versions/{id}
 **请求参数**:
 ```typescript
 interface UpdateVersionRequest {
-  releaseNotes?: string;
-  downloadUrl?: string;
+  release_notes?: string;
+  download_url?: string;
   checksum?: string;
-  isMandatory?: boolean;
-  isEnabled?: boolean;
+  is_mandatory?: boolean;
+  is_enabled?: boolean;
 }
 ```
 
@@ -436,16 +436,16 @@ interface UpgradeRecordListResponse {
 
 interface UpgradeRecord {
   id: string;
-  tenantId: string;
-  tenantName: string;
-  fromVersion: string;
-  toVersion: string;
+  tenant_id: string;
+  tenant_name: string;
+  from_version: string;
+  to_version: string;
   status: 'pending' | 'running' | 'success' | 'failed' | 'rollback';
-  errorMsg?: string;
-  startedAt: string;
-  completedAt?: string;
-  operatedBy: string;
-  operatedByName: string;
+  error_msg?: string;
+  started_at: string;
+  completed_at?: string;
+  operated_by: string;
+  operated_by_name: string;
 }
 ```
 
@@ -464,14 +464,14 @@ GET /saas/api/v1/config
 interface GetConfigResponse {
   code: 0;
   data: {
-    platformName: string;
-    platformLogo: string;
-    defaultPackage: string;
-    tokenExpireMinutes: number;
-    refreshTokenExpireDays: number;
-    maxUsersPerTenant: number;
-    maxProjectsPerTenant: number;
-    versionCheckIntervalHours: number;
+    platform_name: string;
+    platform_logo: string;
+    default_package: string;
+    token_expire_minutes: number;
+    refresh_token_expire_days: number;
+    max_users_per_tenant: number;
+    max_projects_per_tenant: number;
+    version_check_interval_hours: number;
   };
 }
 ```
@@ -485,13 +485,13 @@ PUT /saas/api/v1/config
 **请求参数**:
 ```typescript
 interface UpdateConfigRequest {
-  platformName?: string;
-  platformLogo?: string;
-  defaultPackage?: string;
-  tokenExpireMinutes?: number;
-  refreshTokenExpireDays?: number;
-  maxUsersPerTenant?: number;
-  maxProjectsPerTenant?: number;
+  platform_name?: string;
+  platform_logo?: string;
+  default_package?: string;
+  token_expire_minutes?: number;
+  refresh_token_expire_days?: number;
+  max_users_per_tenant?: number;
+  max_projects_per_tenant?: number;
 }
 ```
 
@@ -518,12 +518,12 @@ interface OverviewResponse {
     };
     users: {
       total: number;           // 累计用户
-      monthNew: number;        // 本月新增
+      month_new: number;        // 本月新增
     };
-    auditData: {
+    audit_data: {
       total: number;           // 累计审核数据
-      monthTotal: number;      // 本月审核
-      todayTotal: number;      // 今日审核
+      month_total: number;      // 本月审核
+      today_total: number;      // 今日审核
     };
     upgrades: {
       total: number;           // 累计升级
@@ -545,20 +545,20 @@ GET /saas/api/v1/statistics/tenants
 interface TenantStatisticsResponse {
   code: 0;
   data: {
-    monthlyTrend: {
+    monthly_trend: {
       month: string;           // "2024-01"
-      newTenants: number;
-      totalTenants: number;
+      new_tenants: number;
+      total_tenants: number;
     }[];
-    packageDistribution: {
+    package_distribution: {
       package: string;
       count: number;
       percentage: number;
     }[];
-    topActiveTenants: {
-      tenantId: string;
-      tenantName: string;
-      auditCount: number;
+    top_active_tenants: {
+      tenant_id: string;
+      tenant_name: string;
+      audit_count: number;
     }[];
   };
 }
@@ -575,19 +575,19 @@ GET /saas/api/v1/statistics/versions
 interface VersionStatisticsResponse {
   code: 0;
   data: {
-    versionDistribution: {
+    version_distribution: {
       version: string;
-      tenantCount: number;
+      tenant_count: number;
       percentage: number;
     }[];
-    upgradeTrend: {
+    upgrade_trend: {
       month: string;
-      upgradeCount: number;
+      upgrade_count: number;
     }[];
-    pendingUpgrades: {
+    pending_upgrades: {
       version: string;
-      tenantCount: number;
-      isMandatory: boolean;
+      tenant_count: number;
+      is_mandatory: boolean;
     }[];
   };
 }
