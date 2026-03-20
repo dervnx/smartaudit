@@ -120,23 +120,48 @@
 
 ## 3. 权限校验
 
-### 3.1 权限校验流程
+### 3.1 Cabin 权限管理
+
+系统采用 [Cabin](https://github.com/cdleee/cabin) 开源 RBAC 权限管理库实现细粒度权限控制。
+
+**Cabin 核心概念：**
+- **用户 (User)**：系统登录用户
+- **角色 (Role)**：权限集合，如管理员、审核员、普通员工
+- **权限 (Permission)**：具体操作权限，如项目查看、数据审核
+- **租户 (Tenant)**：多租户隔离
+
+**Cabin 特点：**
+- 基于角色（Role）的权限管理
+- 支持权限继承和组
+- 装饰器模式，简洁易用
+- 支持多租户数据隔离
+- 内置缓存，高性能
+
+### 3.2 权限校验流程
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                       权限校验流程                                │
+│                       权限校验流程 (Cabin)                        │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  请求带着 Access Token                                           │
 │    │                                                           │
 │    ▼                                                           │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │ 1. 解析 Token，获取用户信息和权限列表                     │   │
+│  │ 1. Cabin 解析 Token，获取用户信息和角色列表               │   │
 │  └─────────────────────────────────────────────────────────┘   │
 │    │                                                           │
 │    ▼                                                           │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │ 2. 检查权限列表中是否包含所需权限                          │   │
+│  │ 2. Cabin 查询用户角色对应的权限                           │   │
+│  │    - 读取角色表 (biz_roles)                               │   │
+│  │    - 读取角色权限关系表 (biz_role_permissions)            │   │
+│  │    - 合并用户额外权限 (biz_accounts.extra_permissions)     │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│    │                                                           │
+│    ▼                                                           │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ 3. 检查所需权限是否在用户权限列表中                        │   │
 │  │                                                          │   │
 │  │    required_permission ∈ user_permissions                │   │
 │  │                                                          │   │
@@ -149,60 +174,165 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 3.2 权限校验实现
+### 3.3 Cabin 权限实现
 
 ```python
 # app/api/deps.py
 from functools import wraps
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from cabin.auth import need_permissions, get_current_user_from_token
+from cabin.models import User
 
 def require_permission(*permissions):
     """
-    权限校验装饰器
+    Cabin 权限校验装饰器
 
     Usage:
         @router.get("/projects")
-        @require_permission("PROJECT_VIEW")
+        @need_permissions("PROJECT_VIEW")
         async def list_projects(...):
             ...
     """
+    @wraps
     def decorator(func):
         @wraps(func)
-        async def wrapper(
-            current_user: User = Depends(get_current_user),
-            *args,
-            **kwargs
-        ):
-            # 获取用户权限
-            user_permissions = await get_user_permissions(current_user)
-
-            # 检查权限
-            for permission in permissions:
-                if permission not in user_permissions:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"权限不足: 需要 {permission}"
-                    )
-
+        async def wrapper(*args, **kwargs):
+            # Cabin 自动从 Token 解析用户并校验权限
             return await func(*args, **kwargs)
-
         return wrapper
     return decorator
 
 
-async def get_user_permissions(user: User) -> List[str]:
-    """获取用户所有权限"""
-    # 1. 获取角色权限
-    role_permissions = set()
-    for role in user.roles:
-        for rp in role.role_permissions:
-            if rp.is_granted:
-                role_permissions.add(rp.permission.code)
+async def get_current_user(token: str = Depends(lambda: None)) -> User:
+    """获取当前用户（Cabin 实现）"""
+    if not token:
+        raise HTTPException(status_code=401, detail="未登录")
 
-    # 2. 合并额外权限
-    all_permissions = list(role_permissions) + list(user.extra_permissions or [])
+    # Cabin 解析 Token
+    user = await get_current_user_from_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Token 无效")
 
-    return all_permissions
+    return user
+
+
+# cabin 权限定义示例
+PERMISSIONS = {
+    # 项目权限
+    "PROJECT_VIEW": "查看项目",
+    "PROJECT_CREATE": "创建项目",
+    "PROJECT_EDIT": "编辑项目",
+    "PROJECT_DELETE": "删除项目",
+
+    # 审核权限
+    "AUDIT_VIEW": "查看审核数据",
+    "AUDIT_EXECUTE": "执行审核",
+    "AUDIT_RECHECK": "二次复核",
+
+    # 规则权限
+    "RULE_VIEW": "查看规则",
+    "RULE_CREATE": "创建规则",
+    "RULE_EDIT": "编辑规则",
+    "RULE_DELETE": "删除规则",
+
+    # 账户权限
+    "ACCOUNT_VIEW": "查看账户",
+    "ACCOUNT_CREATE": "创建账户",
+    "ACCOUNT_EDIT": "编辑账户",
+    "ACCOUNT_DELETE": "删除账户",
+    "ACCOUNT_PASSWORD": "重置密码",
+
+    # 系统权限
+    "SYSTEM_CONFIG": "系统配置",
+    "BACKUP_VIEW": "查看备份",
+    "BACKUP_CREATE": "创建备份",
+    "BACKUP_RESTORE": "恢复备份",
+    "VERSION_VIEW": "版本管理",
+    "VERSION_UPGRADE": "执行升级",
+}
+```
+
+### 3.4 Cabin 角色定义
+
+```python
+# cabin/roles.py
+from cabin.models import Role
+
+# 系统内置角色
+SYSTEM_ROLES = {
+    "SUPER_ADMIN": {
+        "name": "超级管理员",
+        "description": "租户最高管理员，拥有所有权限",
+        "is_system": True,
+        "permissions": ["*"],  # 所有权限
+    },
+    "ADMIN": {
+        "name": "管理员",
+        "description": "普通管理员，管理日常运营",
+        "is_system": True,
+        "permissions": [
+            "PROJECT_VIEW", "PROJECT_CREATE", "PROJECT_EDIT",
+            "AUDIT_VIEW", "AUDIT_EXECUTE", "AUDIT_RECHECK",
+            "RULE_VIEW", "RULE_CREATE", "RULE_EDIT",
+            "ACCOUNT_VIEW", "ACCOUNT_CREATE", "ACCOUNT_EDIT",
+        ],
+    },
+    "AUDITOR": {
+        "name": "审核员",
+        "description": "执行审核操作",
+        "is_system": True,
+        "permissions": [
+            "PROJECT_VIEW",
+            "AUDIT_VIEW", "AUDIT_EXECUTE",
+        ],
+    },
+    "STAFF": {
+        "name": "普通员工",
+        "description": "提交审核数据",
+        "is_system": True,
+        "permissions": [
+            "PROJECT_VIEW",
+            "AUDIT_VIEW",
+        ],
+    },
+}
+```
+
+### 3.5 Cabin 多租户隔离
+
+```python
+# cabin/tenant.py
+from cabin.auth import tenant_required
+from cabin.tenant import TenantScope
+
+@tenant_required
+async def get_tenant_data(
+    tenant_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Cabin 自动校验用户所属租户"""
+    # Cabin 自动验证 current_user.tenant_id == tenant_id
+    # 确保数据隔离
+    return await fetch_tenant_data(tenant_id)
+
+
+class TenantScope:
+    """Cabin 租户作用域"""
+
+    @staticmethod
+    def filter(query, tenant_id: str):
+        """自动添加租户过滤条件"""
+        return query.filter(tenant_id=tenant_id)
+
+    @staticmethod
+    def scope_model(model_class):
+        """装饰器：自动过滤租户数据"""
+        def decorator(func):
+            async def wrapper(*args, **kwargs):
+                # 自动注入 tenant_id
+                return await func(*args, **kwargs)
+            return wrapper
+        return decorator
 ```
 
 ## 4. 多租户隔离

@@ -631,33 +631,55 @@ CREATE TABLE biz_third_party_logs (
    - 多次刷新失败后重新登录
 ```
 
-### 8.2 权限校验
+### 8.2 权限校验 (Cabin)
+
+系统采用 Cabin 开源 RBAC 权限库进行权限管理。
 
 ```python
 # app/core/security.py
-def check_permission(required_permission: str):
-    """权限校验装饰器"""
-    async def wrapper(
-        request: Request,
-        current_user = Depends(get_current_user),
-    ):
-        user_permissions = await get_user_permissions(
-            current_user.tenant_id,
-            current_user.id
-        )
+from cabin.auth import need_permissions, get_current_user_from_token
+from cabin.models import User
 
-        if required_permission not in user_permissions:
-            raise HTTPException(
-                status_code=403,
-                detail="无权限访问"
-            )
+# Cabin 权限校验装饰器
+def require_permission(*permissions: str):
+    """
+    Cabin 权限校验装饰器
 
-        return await call_next(request)
-    return wrapper
+    使用示例:
+        @router.get("/tenants/{id}")
+        @need_permissions("TENANT_VIEW")
+        async def get_tenant(request: Request, id: int):
+            ...
+    """
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            # Cabin 自动从请求中解析 Token 并校验权限
+            return await func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+# 获取当前用户（Cabin 实现）
+async def get_current_user(token: str = Depends(lambda: None)) -> User:
+    """获取当前用户"""
+    if not token:
+        raise HTTPException(status_code=401, detail="未登录")
+
+    # Cabin 解析 Token
+    user = await get_current_user_from_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Token 无效")
+
+    return user
+
+
+# Cabin 内置权限校验
+from cabin.auth import cabin_check_permission
 
 # 使用示例
 @router.get("/tenants/{id}")
-@check_permission("TENANT_VIEW")
+@cabin_check_permission("TENANT_VIEW")
 async def get_tenant(request: Request, id: int):
     ...
 ```
