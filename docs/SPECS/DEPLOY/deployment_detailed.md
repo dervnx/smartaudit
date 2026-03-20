@@ -901,3 +901,328 @@ vim /opt/smartaudit/.env
 # 重启服务
 docker-compose restart
 ```
+
+---
+
+## 11. 多地多中心部署
+
+### 11.1 地域规划
+
+| 地域 | 机房 | 角色 | 网络延迟 |
+|------|------|------|----------|
+| 华北 | 北京 | 主中心 | < 5ms |
+| 华东 | 上海 | 同城备中心 | < 30ms |
+| 华南 | 广州 | 异地灾备 | < 50ms |
+
+### 11.2 主中心部署
+
+```bash
+# 1. 在主中心服务器初始化
+ssh root@bj-master-01
+cd /opt/smartaudit
+
+# 2. 克隆部署仓库
+git clone https://github.com/your-org/smartaudit-deploy.git
+cd smartaudit-deploy/multi-region/primary
+
+# 3. 配置地域标识
+cat > .env << EOF
+REGION_ID=cn-north
+REGION_NAME=华北
+REGION_PRIORITY=1
+ROLE=primary
+EOF
+
+# 4. 配置数据库主从复制
+cat >> docker-compose.yml << EOF
+db-primary:
+  image: postgres:15
+  environment:
+    POSTGRES_REPLICATION: primary
+    POSTGRES_REPLICATION_USER: replicator
+    POSTGRES_REPLICATION_PASSWORD: replication_password
+  command: postgres -c wal_level=logical -c max_wal_senders=4
+
+db-replica:
+  image: postgres:15
+  environment:
+    POSTGRES_REPLICATION: replica
+    POSTGRES_REPLICATION_USER: replicator
+    POSTGRES_REPLICATION_PASSWORD: replication_password
+EOF
+
+# 5. 配置 Redis 主从
+cat >> docker-compose.yml << EOF
+redis-master:
+  image: redis:7
+  command: redis-server --appendonly yes --replica-read-only yes
+
+redis-slave:
+  image: redis:7
+  command: redis-server --replicaof redis-master 6379
+EOF
+
+# 6. 启动主中心
+docker-compose up -d
+```
+
+### 11.3 同城备中心部署
+
+```bash
+# 1. 在备中心服务器初始化
+ssh root@sh-standby-01
+cd /opt/smartaudit
+
+# 2. 克隆部署仓库
+git clone https://github.com/your-org/smartaudit-deploy.git
+cd smartaudit-deploy/multi-region/standby
+
+# 3. 配置地域标识
+cat > .env << EOF
+REGION_ID=cn-east
+REGION_NAME=华东
+REGION_PRIORITY=2
+ROLE=standby
+PRIMARY_REGION=cn-north
+EOF
+
+# 4. 启动备中心（会自动同步主中心数据）
+docker-compose up -d
+```
+
+### 11.4 配置全局负载均衡
+
+```nginx
+# /etc/nginx/conf.d/gslb.conf
+
+upstream smartaudit_backend {
+    # 主中心（华北）
+    server bj-master-01.smartaudit.com:443 weight=100;
+
+    # 同城备中心（华东）
+    server sh-standby-01.smartaudit.com:443 weight=50 backup;
+
+    # 异地灾备（华南，冷备）
+    server gz-dr-01.smartaudit.com:443 weight=10 backup;
+}
+
+server {
+    listen 443 ssl;
+    server_name api.smartaudit.com;
+
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+
+    location / {
+        proxy_pass https://smartaudit_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Region-ID $http_x_region_id;
+
+        # 健康检查配置
+        proxy_connect_timeout 5s;
+        proxy_next_upstream error timeout http_502;
+    }
+}
+
+# GeoIP 地域路由
+geo $region {
+    default cn-north;
+    31.192.0.0/16 cn-east;    # 上海 IP 段
+    58.192.0.0/16 cn-south;   # 广州 IP 段
+}
+
+server {
+    listen 443 ssl;
+    server_name ~^(?<region>[a-z]+)-api\.smartaudit\.com$;
+
+    # 根据地域路由到对应中心
+    if ($region = cn-east) {
+        proxy_pass https://sh-standby-01.smartaudit.com;
+    }
+    if ($region = cn-south) {
+        proxy_pass https://gz-dr-01.smartaudit.com;
+    }
+}
+```
+
+### 11.5 配置数据库流复制
+
+```bash
+# 主中心创建复制用户
+docker exec -it smartaudit-db-primary psql -U postgres -c \
+  "CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replication_password';"
+
+# 主中心配置 pg_hba.conf 允许复制
+echo "host replication replicator 10.0.1.0/24 md5" >> /var/lib/postgresql/data/pg_hba.conf
+
+# 主中心配置 postgresql.conf
+echo "wal_level = logical" >> /var/lib/postgresql/data/postgresql.conf
+echo "max_wal_senders = 4" >> /var/lib/postgresql/data/postgresql.conf
+echo "wal_keep_size = 1GB" >> /var/lib/postgresql/data/postgresql.conf
+
+# 重启主中心数据库
+docker exec -it smartaudit-db-primary pg_ctl restart
+
+# 备中心创建复制槽（备中心执行）
+docker exec -it smartaudit-db-replica psql -U postgres -c \
+  "SELECT * FROM pg_create_physical_replication_slot('standby_slot');"
+
+# 备中心启动复制
+docker exec -it smartaudit-db-replica psql -U postgres -c \
+  "SELECT pg_start_replication(slot_name => 'standby_slot', logical => false);"
+```
+
+### 11.6 配置 Redis 哨兵集群
+
+```python
+# redis-sentinel.conf
+sentinel monitor mymaster redis-master 6379 2
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 30000
+sentinel parallel-syncs mymaster 1
+
+sentinel announce-ip "10.0.2.10"
+sentinel announce-port 26379
+```
+
+```bash
+# 启动哨兵节点
+docker run -d --name redis-sentinel \
+  -v /opt/redis/sentinel.conf:/etc/redis/sentinel.conf \
+  redis:7 redis-sentinel /etc/redis/sentinel.conf
+```
+
+### 11.7 跨地域数据同步脚本
+
+```bash
+#!/bin/bash
+# sync_data.sh - 跨地域数据同步脚本
+
+set -e
+
+PRIMARY_REGION="cn-north"
+BACKUP_REGION="cn-east"
+CURRENT_REGION=${REGION_ID:-cn-north}
+
+if [ "$CURRENT_REGION" = "$PRIMARY_REGION" ]; then
+    echo "主中心：执行数据同步任务"
+
+    # 导出关键数据
+    docker exec smartaudit-db-primary pg_dump -U postgres smartaudit \
+      --format=custom \
+      --file=/tmp/sync_data.dump
+
+    # 上传到对象存储
+    ossutil cp /tmp/sync_data.dump oss://smartaudit-backup/sync/
+
+    echo "同步任务完成，等待备中心拉取"
+else
+    echo "备中心：从对象存储拉取数据"
+
+    # 从对象存储下载
+    ossutil cp oss://smartaudit-backup/sync/sync_data.dump /tmp/
+
+    # 应用增量数据
+    docker exec -i smartaudit-db-replica pg_restore -U postgres -d smartaudit \
+      --data-only \
+      /tmp/sync_data.dump
+
+    echo "数据同步完成"
+fi
+```
+
+### 11.8 健康检查与故障切换
+
+```bash
+#!/bin/bash
+# health_check.sh - 健康检查脚本
+
+set -e
+
+CHECK_INTERVAL=5
+FAIL_THRESHOLD=3
+PRIMARY_API="http://bj-master-01:8000/health"
+STANDBY_API="http://sh-standby-01:8000/health"
+
+check_service() {
+    local url=$1
+    curl -sf "$url" > /dev/null 2>&1
+    return $?
+}
+
+# 检查主中心
+fail_count=0
+while ! check_service "$PRIMARY_API"; do
+    ((fail_count++))
+    echo "主中心不可用 (${fail_count}/${FAIL_THRESHOLD})"
+
+    if [ $fail_count -ge $FAIL_THRESHOLD ]; then
+        echo "触发故障切换！"
+        # 通知 DNS 切换
+        curl -X POST "http://dns-manager/api/failover" \
+          -d '{"from": "cn-north", "to": "cn-east"}'
+        exit 1
+    fi
+    sleep $CHECK_INTERVAL
+done
+
+echo "主中心正常"
+```
+
+### 11.9 切换演练流程
+
+```bash
+# 1. 演练前检查
+echo "=== 切换演练前检查 ==="
+# - 确认数据同步延迟 < 1 分钟
+# - 确认备中心服务正常
+# - 确认 DNS 切换脚本可用
+
+# 2. 执行切换
+echo "=== 执行切换演练 ==="
+# 停止主中心服务
+ssh root@bj-master-01 "docker-compose down"
+
+# 等待检测（5秒 x 3次）
+sleep 15
+
+# 验证备中心接管
+curl https://sh-standby-01.smartaudit.com/api/v1/health
+
+# 3. 回切
+echo "=== 执行回切 ==="
+# 恢复主中心
+ssh root@bj-master-01 "docker-compose up -d"
+
+# 等待数据追平
+sleep 60
+
+# 验证数据一致性
+ssh root@bj-master-01 "/opt/smartaudit/scripts/verify_data.sh"
+
+# 切回主中心
+curl -X POST "http://dns-manager/api/failover" \
+  -d '{"from": "cn-east", "to": "cn-north"}'
+
+# 4. 演练后验证
+echo "=== 演练后验证 ==="
+# - 验证所有数据完整性
+# - 验证所有服务状态
+# - 生成演练报告
+```
+
+### 11.10 多中心部署检查清单
+
+| 检查项 | 主中心 | 同城备 | 异地灾备 |
+|--------|--------|--------|----------|
+| 服务启动 | □ | □ | □ |
+| 数据库复制 | □ | □ | □ |
+| Redis 复制 | □ | □ | □ |
+| Nginx 健康检查 | □ | □ | □ |
+| DNS 路由 | □ | □ | □ |
+| 告警配置 | □ | □ | □ |
+| 备份策略 | □ | □ | □ |
+| 切换演练 | □ | □ | □ |
+
