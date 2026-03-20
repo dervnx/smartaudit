@@ -97,8 +97,8 @@ interface UserBase {
   phone?: string;
   avatar?: string;
   status: 'active' | 'inactive';
-  createdAt: DateTime;
-  updatedAt: DateTime;
+  created_at: DateTime;
+  updated_at: DateTime;
 }
 ```
 
@@ -182,8 +182,8 @@ interface Tenant {
   serviceStartDate: Date;
   serviceEndDate: Date;
   status: 'active' | 'inactive' | 'expired';
-  createdAt: DateTime;
-  updatedAt: DateTime;
+  created_at: DateTime;
+  updated_at: DateTime;
 }
 ```
 
@@ -252,8 +252,8 @@ interface Project {
   taskAssignType: TaskAssignType;
   status: 'active' | 'inactive' | 'archived';
   createdBy?: UUID;
-  createdAt: DateTime;
-  updatedAt: DateTime;
+  created_at: DateTime;
+  updated_at: DateTime;
 }
 
 type TaskAssignType =
@@ -349,8 +349,8 @@ interface Rule {
   priority: number;
   status: 'active' | 'inactive';
   createdBy?: UUID;
-  createdAt: DateTime;
-  updatedAt: DateTime;
+  created_at: DateTime;
+  updated_at: DateTime;
 }
 ```
 
@@ -400,7 +400,7 @@ interface AuditData {
   recheckNote?: string;
   status: AuditStatus;
   priority: number;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 ```
 
@@ -423,7 +423,7 @@ interface Task {
   assignedAt?: DateTime;
   startedAt?: DateTime;
   completedAt?: DateTime;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 ```
 
@@ -461,7 +461,7 @@ interface ThirdPartyConfig {
   timeout: number;
   retryCount: number;
   status: 'active' | 'inactive';
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 
 type ThirdPartyType =
@@ -536,7 +536,7 @@ interface BackupRule {
   lastBackupAt?: DateTime;
   nextBackupAt?: DateTime;
   createdBy?: UUID;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 
 interface StorageConfig {
@@ -563,7 +563,7 @@ interface BackupRecord {
   fileSize?: number;      // 字节
   checksum?: string;
   errorMsg?: string;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 ```
 
@@ -584,7 +584,7 @@ interface SystemVersion {
   isEnabled: boolean;
   minCompatibleVersion?: string;
   publishedAt: DateTime;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 ```
 
@@ -657,6 +657,6 @@ interface OperationLog {
   requestData?: Record<string, any>;
   status: 'success' | 'failed';
   errorMsg?: string;
-  createdAt: DateTime;
+  created_at: DateTime;
 }
 ```

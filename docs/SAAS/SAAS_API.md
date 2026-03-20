@@ -82,7 +82,7 @@ interface GetMeResponse {
   role: string;
   status: string;
   lastLoginAt?: string;
-  createdAt: string;
+  created_at: string;
 }
 ```
 
@@ -159,7 +159,7 @@ interface Tenant {
   status: 'active' | 'inactive' | 'expired';
   userCount: number;
   projectCount: number;
-  createdAt: string;
+  created_at: string;
 }
 ```
 
@@ -199,7 +199,7 @@ interface CreateTenantResponse {
     serviceStartDate: string;
     serviceEndDate: string;
     status: string;
-    createdAt: string;
+    created_at: string;
   };
 }
 ```
@@ -248,8 +248,8 @@ interface TenantDetailResponse {
     };
 
     // 时间信息
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
   };
 }
 ```
@@ -364,7 +364,7 @@ interface SystemVersion {
     pendingUpgrades: number;
     upgradeRate: number;
   };
-  createdAt: string;
+  created_at: string;
 }
 ```
 

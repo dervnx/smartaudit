@@ -108,7 +108,7 @@ interface Account {
   roles: Role[];
   status: 'active' | 'inactive';
   lastLoginAt?: string;
-  createdAt: string;
+  created_at: string;
 }
 ```
 
@@ -267,7 +267,7 @@ interface Role {
   isSystem: boolean;
   userCount: number;
   permissions: string[];
-  createdAt: string;
+  created_at: string;
 }
 ```
 
@@ -542,7 +542,7 @@ interface AuditData {
   autoResult?: 'pass' | 'reject' | 'pending';
   status: 'pending' | 'in_progress' | 'passed' | 'rejected' | 'rechecking';
   priority: number;
-  createdAt: string;
+  created_at: string;
 }
 ```
 
@@ -612,7 +612,7 @@ interface AuditDetailResponse {
     recheckTime?: string;
     recheckResult?: string;
     status: string;
-    createdAt: string;
+    created_at: string;
   };
 }
 
