@@ -119,8 +119,7 @@ API网关层: Nginx / API Gateway
 - [部署详细手册](docs/SPECS/DEPLOY/deployment_detailed.md)
 
 **原型设计**
-- [SaaS 管理平台原型](docs/PROTOTYPES/SAAS/prototype_saas.md)
-- [租户系统原型](docs/PROTOTYPES/TENANT/prototype_tenant.md)
+- [Axure 原型说明](docs/PROTOTYPES/AXURE/README.md)
 
 **投标文档**
 - [投标技术文档](docs/BID_DOCUMENTATION/smartaudit_bid_document.md)

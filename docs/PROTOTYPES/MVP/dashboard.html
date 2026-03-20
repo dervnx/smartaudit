@@ -11,15 +11,10 @@
     .welcome-banner h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
     .welcome-banner p { font-size: 13px; opacity: 0.85; }
     .version-tag { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 12px; font-size: 12px; }
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-    .stats-row .stat-card { text-align: left; padding: 16px 20px; }
-    .stats-row .value { font-size: 26px; }
-    .stats-row .label { font-size: 12px; margin-top: 4px; }
-    .stats-row .sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
-    .quick-btn { background: #f8f9fa; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; }
-    .quick-btn:hover { background: var(--primary-light); }
-    .quick-btn .icon { font-size: 24px; margin-bottom: 6px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+    .quick-btn { background: #f8f9fa; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .quick-btn:hover { background: var(--primary-light); transform: translateY(-2px); }
+    .quick-btn .icon { font-size: 28px; }
     .quick-btn .label { font-size: 13px; color: var(--text-secondary); }
     table td .project-name { font-weight: 500; }
     table td .project-code { font-size: 11px; color: var(--text-muted); }
@@ -27,19 +22,24 @@
 </head>
 <body>
   <div class="header">
-    <div class="header-title">SmartAudit MVP</div>
+    <div class="header-title"><span class="logo">🛡️</span> SmartAudit MVP</div>
     <div class="header-right">
-      <span>2024-01-15</span>
+      <div class="notification">🔔<span class="badge">3</span></div>
       <div class="avatar">管</div>
     </div>
   </div>
 
   <div class="layout">
     <div class="sidebar">
-      <div class="menu-item active">📊 工作台</div>
-      <div class="menu-item">📁 项目管理</div>
-      <div class="menu-item">📋 审核任务</div>
-      <div class="menu-item">📈 数据统计</div>
+      <div class="menu-group">
+        <div class="menu-group-title">工作区</div>
+        <a href="dashboard.html" class="menu-item active">📊 工作台</a>
+        <a href="projects.html" class="menu-item">📁 项目管理</a>
+        <a href="audit.html" class="menu-item">📋 审核任务<span class="count warning">3</span></a>
+        <a href="task_review.html" class="menu-item">✅ 人工复核</a>
+        <a href="rule_builder.html" class="menu-item">📐 规则配置</a>
+        <a href="statistics.html" class="menu-item">📈 数据统计</a>
+      </div>
     </div>
 
     <div class="main">
@@ -48,54 +48,72 @@
           <h2>早上好，管理员</h2>
           <p>欢迎使用 SmartAudit 智核审核系统 MVP 版本</p>
         </div>
-        <div class="version-tag">MVP v1.0</div>
+        <div class="version-tag">MVP v1.0.0</div>
       </div>
 
-      <div class="stats-row">
+      <div class="stats-grid">
         <div class="stat-card">
-          <div class="value" style="color: var(--primary);">3</div>
-          <div class="label">总项目数</div>
-          <div class="sub">2 个运行中</div>
+          <div class="icon blue">📁</div>
+          <div class="info">
+            <div class="value">3</div>
+            <div class="label">总项目数</div>
+            <div class="trend up">↑ 2 个运行中</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="value" style="color: var(--success);">1,256</div>
-          <div class="label">今日审核量</div>
-          <div class="sub">通过率 89.2%</div>
+          <div class="icon green">📋</div>
+          <div class="info">
+            <div class="value">1,256</div>
+            <div class="label">今日审核量</div>
+            <div class="trend up">↑ 12.5%</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="value" style="color: var(--warning);">23</div>
-          <div class="label">待处理任务</div>
-          <div class="sub">需人工复核</div>
+          <div class="icon yellow">⚠️</div>
+          <div class="info">
+            <div class="value">23</div>
+            <div class="label">待处理任务</div>
+            <div class="trend down">需人工复核</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="value" style="color: var(--text);">8</div>
-          <div class="label">规则总数</div>
-          <div class="sub">全部启用</div>
+          <div class="icon red">📐</div>
+          <div class="info">
+            <div class="value">8</div>
+            <div class="label">规则总数</div>
+            <div class="trend up">全部启用</div>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="section-title">快捷操作</div>
+        <div class="card-header">
+          <span class="card-title">快捷操作</span>
+        </div>
         <div class="quick-actions">
-          <div class="quick-btn">
+          <div class="quick-btn" onclick="window.location.href='projects.html'">
             <div class="icon">📁</div>
             <div class="label">新建项目</div>
           </div>
-          <div class="quick-btn">
+          <div class="quick-btn" onclick="window.location.href='audit.html'">
             <div class="icon">📋</div>
             <div class="label">审核任务</div>
           </div>
-          <div class="quick-btn">
+          <div class="quick-btn" onclick="window.location.href='task_review.html'">
+            <div class="icon">✅</div>
+            <div class="label">人工复核</div>
+          </div>
+          <div class="quick-btn" onclick="window.location.href='statistics.html'">
             <div class="icon">📊</div>
             <div class="label">查看报表</div>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <div class="section-title" style="margin-bottom: 0;">最新审核记录</div>
-          <a href="#" style="font-size: 12px;">查看全部 →</a>
+      <div class="card" style="padding: 0;">
+        <div class="card-header" style="padding: 16px 20px;">
+          <span class="card-title">最新审核记录</span>
+          <a href="audit.html" style="font-size: 12px;">查看全部 →</a>
         </div>
         <table class="data-table">
           <thead>
@@ -124,7 +142,7 @@
                 <div class="project-name">合同文本审核</div>
                 <div class="project-code">CONTRACT</div>
               </td>
-              <td><span class="badge warning">复核</span></td>
+              <td><span class="badge warning">待复核</span></td>
               <td>需人工确认</td>
               <td>09:45</td>
             </tr>
@@ -151,6 +169,15 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2024 SmartAudit 智核. 保留所有权利.</span>
+    <div class="footer-links">
+      <a href="#">帮助文档</a>
+      <a href="#">联系支持</a>
+      <a href="#">版本 v1.0.0</a>
     </div>
   </div>
 </body>

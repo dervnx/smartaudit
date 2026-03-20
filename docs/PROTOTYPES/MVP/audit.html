@@ -8,61 +8,67 @@
   <link rel="stylesheet" href="style.css">
   <style>
     .tabs { display: flex; gap: 4px; background: var(--white); padding: 4px; border-radius: 8px; margin-bottom: 16px; width: fit-content; box-shadow: var(--shadow); }
-    .tab { padding: 8px 18px; cursor: pointer; font-size: 13px; color: var(--text-muted); border-radius: 6px; }
+    .tab { padding: 8px 18px; cursor: pointer; font-size: 13px; color: var(--text-muted); border-radius: 6px; display: flex; align-items: center; gap: 6px; }
     .tab:hover { background: #f5f5f5; }
     .tab.active { background: var(--primary); color: #fff; }
-    .tab .count { margin-left: 4px; opacity: 0.8; }
-    .filters { background: var(--white); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-end; }
-    .filters .form-group { margin-bottom: 0; }
-    .filters label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; display: block; }
-    .result-summary { display: flex; gap: 20px; margin-bottom: 14px; }
-    .result-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-    .result-item .icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-    .result-item .icon.pass { background: var(--success-bg); color: var(--success); }
-    .result-item .icon.fail { background: var(--danger-bg); color: var(--danger); }
-    .result-item .icon.warn { background: var(--warning-bg); color: var(--warning); }
+    .tab .count { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+    .tab:not(.active) .count { background: var(--bg); color: var(--text-muted); }
     .submit-area { background: var(--white); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-    .submit-area h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
-    .json-input { width: 100%; min-height: 100px; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; resize: vertical; outline: none; }
-    .json-input:focus { border-color: var(--primary); }
-    .result-panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .submit-area h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .json-input { width: 100%; min-height: 100px; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 12px; resize: vertical; outline: none; background: #fafafa; }
+    .json-input:focus { border-color: var(--primary); background: var(--white); }
+    .result-panel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
     .result-header { padding: 14px 18px; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .result-body { padding: 18px; }
-    .result-status { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .result-status { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
     .result-status .badge { padding: 6px 14px; font-size: 13px; }
     .rule-results { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
     .rule-row { display: flex; align-items: center; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
     .rule-row:last-child { border-bottom: none; }
     .rule-row .name { flex: 1; font-size: 13px; }
     .rule-row .result { font-size: 12px; font-weight: 500; }
+    .submit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="header-title">SmartAudit MVP</div>
+    <div class="header-title"><span class="logo">🛡️</span> SmartAudit MVP</div>
     <div class="header-right">
+      <div class="notification">🔔<span class="badge">3</span></div>
       <div class="avatar">管</div>
     </div>
   </div>
 
   <div class="layout">
     <div class="sidebar">
-      <div class="menu-item">📊 工作台</div>
-      <div class="menu-item">📁 项目管理</div>
-      <div class="menu-item active">📋 审核任务</div>
-      <div class="menu-item">📈 数据统计</div>
+      <div class="menu-group">
+        <div class="menu-group-title">工作区</div>
+        <a href="dashboard.html" class="menu-item">📊 工作台</a>
+        <a href="projects.html" class="menu-item">📁 项目管理</a>
+        <a href="audit.html" class="menu-item active">📋 审核任务<span class="count warning">3</span></a>
+        <a href="task_review.html" class="menu-item">✅ 人工复核</a>
+        <a href="rule_builder.html" class="menu-item">📐 规则配置</a>
+        <a href="statistics.html" class="menu-item">📈 数据统计</a>
+      </div>
     </div>
 
     <div class="main">
-      <h1 class="page-title">审核任务</h1>
-
-      <div class="tabs">
-        <div class="tab active">待处理 <span class="count">(5)</span></div>
-        <div class="tab">审核中 <span class="count">(3)</span></div>
-        <div class="tab">已完成 <span class="count">(128)</span></div>
+      <div class="page-header">
+        <h1 class="page-title">审核任务</h1>
+        <div class="flex gap-2">
+          <button class="btn btn-secondary" onclick="window.location.href='task_review.html'">🆕 人工复核 <span class="badge warning">3</span></button>
+          <a href="rule_builder.html"><button class="btn btn-secondary">📐 规则配置</button></a>
+          <button class="btn btn-primary">📋 批量提交</button>
+        </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="tabs">
+        <div class="tab active">待处理 <span class="count">5</span></div>
+        <div class="tab">审核中 <span class="count">3</span></div>
+        <div class="tab">已完成 <span class="count">128</span></div>
+      </div>
+
+      <div class="submit-grid">
         <!-- Left: Submit -->
         <div>
           <div class="submit-area">
@@ -85,7 +91,7 @@
   "legal_person": "李四"
 }</textarea>
             </div>
-            <button class="btn btn-primary" style="width: 100%;">提交审核</button>
+            <button class="btn btn-primary" style="width: 100%;">🚀 提交审核</button>
           </div>
         </div>
 
@@ -135,8 +141,8 @@
               </div>
 
               <div style="margin-top: 14px; display: flex; gap: 10px;">
-                <button class="btn btn-secondary btn-sm">查看详情</button>
-                <button class="btn btn-primary btn-sm">人工复核</button>
+                <button class="btn btn-secondary btn-sm">📋 查看详情</button>
+                <button class="btn btn-primary btn-sm" onclick="window.location.href='task_review.html'">✅ 人工复核</button>
               </div>
             </div>
           </div>
@@ -145,6 +151,13 @@
 
       <!-- Task List -->
       <div class="card" style="padding: 0; overflow: hidden; margin-top: 16px;">
+        <div class="card-header" style="padding: 16px 20px;">
+          <span class="card-title">审核记录</span>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm">导出</button>
+            <button class="btn btn-secondary btn-sm">刷新</button>
+          </div>
+        </div>
         <table class="data-table">
           <thead>
             <tr>
@@ -160,7 +173,7 @@
           <tbody>
             <tr>
               <td>#10234</td>
-              <td>企业认证审核</td>
+              <td><a href="project_detail.html">企业认证审核</a></td>
               <td>张三</td>
               <td><span class="badge success">已完成</span></td>
               <td>
@@ -171,18 +184,18 @@
             </tr>
             <tr>
               <td>#10233</td>
-              <td>合同审核</td>
+              <td><a href="project_detail.html">合同审核</a></td>
               <td>李四</td>
               <td><span class="badge warning">待复核</span></td>
               <td>
                 <div class="result-item"><span class="icon warn">!</span> 1</div>
               </td>
               <td>09:45</td>
-              <td><a href="#">复核</a></td>
+              <td><a href="task_review.html">复核</a></td>
             </tr>
             <tr>
               <td>#10232</td>
-              <td>企业认证审核</td>
+              <td><a href="project_detail.html">企业认证审核</a></td>
               <td>王五</td>
               <td><span class="badge success">已完成</span></td>
               <td>
@@ -191,9 +204,42 @@
               <td>09:30</td>
               <td><a href="#">查看</a></td>
             </tr>
+            <tr>
+              <td>#10231</td>
+              <td><a href="project_detail.html">资质文件审查</a></td>
+              <td>赵六</td>
+              <td><span class="badge danger">已驳回</span></td>
+              <td>
+                <div class="result-item"><span class="icon fail">✗</span> 2</div>
+              </td>
+              <td>09:15</td>
+              <td><a href="#">查看</a></td>
+            </tr>
           </tbody>
         </table>
       </div>
+
+      <div class="pagination">
+        <div class="pagination-info">显示 1-4 条，共 136 条</div>
+        <div class="pagination-controls">
+          <button disabled>‹</button>
+          <button class="active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>...</button>
+          <button>34</button>
+          <button>›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2024 SmartAudit 智核. 保留所有权利.</span>
+    <div class="footer-links">
+      <a href="#">帮助文档</a>
+      <a href="#">联系支持</a>
+      <a href="#">版本 v1.0.0</a>
     </div>
   </div>
 </body>

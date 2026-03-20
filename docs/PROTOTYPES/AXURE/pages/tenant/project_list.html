@@ -63,22 +63,22 @@
 
   <div class="main-container">
     <div class="sidebar">
-      <div class="menu-item">📊 工作台</div>
+      <div class="menu-item" onclick="window.location.href='dashboard.html'">📊 工作台</div>
       <div class="menu-item active">📁 项目管理</div>
-      <div class="menu-item">📋 任务审核</div>
-      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item" onclick="window.location.href='task_audit.html'">📋 任务审核</div>
+      <div class="menu-item" onclick="window.location.href='statistics.html'">📈 统计报表</div>
       <div class="menu-item">⚙️ 系统设置</div>
       <div style="border-top:1px solid #eee;margin:8px 0;"></div>
-      <div class="menu-item">👤 账户管理</div>
-      <div class="menu-item">🔗 第三方配置</div>
-      <div class="menu-item">📋 版本信息</div>
-      <div class="menu-item">💾 数据备份</div>
+      <div class="menu-item" onclick="window.location.href='account_management.html'">👤 账户管理</div>
+      <div class="menu-item" onclick="window.location.href='third_party_config.html'">🔗 第三方配置</div>
+      <div class="menu-item" onclick="window.location.href='version_info.html'">📋 版本信息</div>
+      <div class="menu-item" onclick="window.location.href='data_backup.html'">💾 数据备份</div>
     </div>
 
     <div class="content">
       <div class="page-header">
         <h1 class="page-title">项目管理</h1>
-        <button class="btn btn-primary">+ 新建项目</button>
+        <button class="btn btn-primary" onclick="window.location.href='project_detail.html'">+ 新建项目</button>
       </div>
 
       <div class="filters">
@@ -132,9 +132,9 @@
               <td><span class="status active">运行中</span></td>
               <td>2023-06-15</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">配置</a>
-                <a href="#">规则</a>
+                <a href="project_detail.html">详情</a>
+                <a href="project_detail.html">配置</a>
+                <a href="rule_builder.html">规则</a>
               </td>
             </tr>
             <tr>
@@ -146,9 +146,9 @@
               <td><span class="status active">运行中</span></td>
               <td>2023-08-20</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">配置</a>
-                <a href="#">规则</a>
+                <a href="project_detail.html">详情</a>
+                <a href="project_detail.html">配置</a>
+                <a href="rule_builder.html">规则</a>
               </td>
             </tr>
             <tr>
@@ -160,7 +160,7 @@
               <td><span class="status paused">已暂停</span></td>
               <td>2023-09-10</td>
               <td class="action-links">
-                <a href="#">详情</a>
+                <a href="project_detail.html">详情</a>
                 <a href="#">启用</a>
               </td>
             </tr>

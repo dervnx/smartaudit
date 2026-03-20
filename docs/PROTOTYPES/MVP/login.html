@@ -8,15 +8,28 @@
   <link rel="stylesheet" href="style.css">
   <style>
     .login-page { min-height: 100vh; display: flex; }
-    .login-left { width: 55%; background: linear-gradient(135deg, #1a73e8, #0d47a1); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 60px; }
-    .login-left h1 { font-size: 40px; margin-bottom: 12px; }
-    .login-left p { font-size: 15px; opacity: 0.9; text-align: center; line-height: 1.7; max-width: 360px; }
+    .login-left { width: 55%; background: linear-gradient(135deg, #1a73e8, #0d47a1); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 60px; position: relative; }
+    .login-left::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23ffffff10' d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,15.43,512.34-5.29,600,6.66,702.06,19.4,799.38,41.63,896,64.09,952.38,79.76,1007.93,84.18,1063,89.17c44.34,3.88,88.92,4.94,133.23-2.36V0Z'/%3E%3Cpath fill='%23ffffff08' d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z'/%3E%3C/svg%3E") no-repeat bottom; background-size: cover; }
+    .login-left h1 { font-size: 42px; margin-bottom: 12px; font-weight: 700; }
+    .login-left p { font-size: 15px; opacity: 0.9; text-align: center; line-height: 1.8; max-width: 380px; }
+    .login-left .features { margin-top: 40px; display: flex; gap: 24px; }
+    .login-left .feature { text-align: center; }
+    .login-left .feature-icon { font-size: 28px; margin-bottom: 8px; }
+    .login-left .feature-text { font-size: 12px; opacity: 0.85; }
     .login-right { width: 45%; display: flex; flex-direction: column; justify-content: center; padding: 60px; }
-    .login-box { max-width: 320px; margin: 0 auto; width: 100%; }
-    .login-box h2 { font-size: 24px; color: var(--text); margin-bottom: 6px; }
+    .login-box { max-width: 340px; margin: 0 auto; width: 100%; }
+    .login-box h2 { font-size: 24px; color: var(--text); margin-bottom: 6px; font-weight: 600; }
     .login-box .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
     .login-box .btn { width: 100%; height: 44px; font-size: 15px; margin-top: 20px; }
-    .footer { position: fixed; bottom: 20px; left: 0; right: 0; text-align: center; font-size: 12px; color: #999; }
+    .login-box .forgot { display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px; }
+    .login-box .forgot a { color: var(--text-muted); }
+    .login-box .forgot a:hover { color: var(--primary); }
+    .captcha-box { display: flex; gap: 10px; }
+    .captcha-box input { flex: 1; }
+    .captcha-preview { width: 90px; height: 38px; background: linear-gradient(135deg, #e8f0fe 0%, #d4e4ff 100%); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: 3px; color: var(--primary); cursor: pointer; user-select: none; }
+    .login-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: 12px; }
+    .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .footer { position: fixed; bottom: 20px; left: 0; right: 0; text-align: center; font-size: 12px; color: #999; z-index: 10; }
   </style>
 </head>
 <body>
@@ -24,6 +37,20 @@
     <div class="login-left">
       <h1>SmartAudit</h1>
       <p>智核智能审核系统<br>最小可行产品 · 核心审核工作流</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text">智能规则引擎</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-text">数据安全合规</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <div class="feature-text">实时数据统计</div>
+        </div>
+      </div>
     </div>
 
     <div class="login-right">
@@ -44,15 +71,15 @@
 
           <div class="form-group">
             <label>验证码</label>
-            <div style="display: flex; gap: 10px;">
-              <input type="text" class="form-control" value="ABCD" placeholder="请输入" style="flex: 1;">
-              <div style="width: 90px; height: 38px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999;">&#x7B7E;&#x540D;&#x9A23;&#x9A8B;</div>
+            <div class="captcha-box">
+              <input type="text" class="form-control" placeholder="请输入" value="AB12">
+              <div class="captcha-preview">AB12</div>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary login-box .btn">登 录</button>
+          <button type="button" class="btn btn-primary" onclick="window.location.href='dashboard.html'">登 录</button>
 
-          <div style="display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px;">
+          <div class="forgot">
             <a href="#">忘记密码？</a>
             <a href="#">联系管理员</a>
           </div>

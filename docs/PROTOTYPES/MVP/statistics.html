@@ -1,0 +1,302 @@
+<!-- SmartAudit MVP - 数据统计 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据统计 - SmartAudit MVP</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+    .stats-row .stat-card { text-align: center; padding: 16px; }
+    .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .chart-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .chart-title { font-size: 15px; font-weight: 600; }
+    .chart-period { display: flex; gap: 4px; }
+    .chart-period button { padding: 4px 10px; font-size: 11px; border: 1px solid var(--border); background: var(--white); border-radius: 4px; cursor: pointer; }
+    .chart-period button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 180px; padding: 0 10px; }
+    .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .bar { width: 100%; background: var(--primary); border-radius: 4px 4px 0 0; transition: height 0.3s; }
+    .bar-label { font-size: 11px; color: var(--text-muted); }
+    .bar-value { font-size: 12px; font-weight: 600; margin-top: 4px; }
+    .pie-chart-container { display: flex; align-items: center; gap: 20px; }
+    .pie-chart { width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(var(--success) 0deg 200deg, var(--warning) 200deg 280deg, var(--danger) 280deg 360deg); position: relative; }
+    .pie-chart::after { content: ''; position: absolute; top: 30px; left: 30px; width: 80px; height: 80px; background: var(--white); border-radius: 50%; }
+    .pie-legend { display: flex; flex-direction: column; gap: 10px; }
+    .pie-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .pie-legend-item .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .pie-legend-item .value { margin-left: auto; font-weight: 600; }
+    .table-stat { width: 100%; }
+    .table-stat td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .table-stat tr:last-child td { border-bottom: none; }
+    .table-stat .project { font-weight: 500; }
+    .table-stat .bar-cell { width: 100px; }
+    .table-stat .mini-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+    .table-stat .mini-bar-fill { height: 100%; border-radius: 3px; }
+    .trend-up { color: var(--success); }
+    .trend-down { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title"><span class="logo">🛡️</span> SmartAudit MVP</div>
+    <div class="header-right">
+      <div class="notification">🔔<span class="badge">3</span></div>
+      <div class="avatar">管</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="menu-group">
+        <div class="menu-group-title">工作区</div>
+        <a href="dashboard.html" class="menu-item">📊 工作台</a>
+        <a href="projects.html" class="menu-item">📁 项目管理</a>
+        <a href="audit.html" class="menu-item">📋 审核任务<span class="count warning">3</span></a>
+        <a href="task_review.html" class="menu-item">✅ 人工复核</a>
+        <a href="rule_builder.html" class="menu-item">📐 规则配置</a>
+        <a href="statistics.html" class="menu-item active">📈 数据统计</a>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="page-header">
+        <h1 class="page-title">数据统计</h1>
+        <div class="page-actions">
+          <select class="form-control" style="width: 150px;">
+            <option>全部项目</option>
+            <option>企业认证审核</option>
+            <option>合同文本审核</option>
+            <option>资质文件审查</option>
+          </select>
+          <button class="btn btn-secondary">📅 2024-01-01 至 2024-01-15</button>
+          <a href="projects.html"><button class="btn btn-secondary">📁 项目管理</button></a>
+          <button class="btn btn-primary">📊 导出报表</button>
+        </div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="icon" style="background: var(--primary-light); color: var(--primary); margin: 0 auto 10px;">📋</div>
+          <div class="value" style="font-size: 28px;">12,458</div>
+          <div class="label">总审核量</div>
+          <div class="trend" style="font-size: 11px; margin-top: 4px;">
+            <span class="trend-up">↑ 12.5%</span> 较上周
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon" style="background: var(--success-bg); color: var(--success); margin: 0 auto 10px;">✅</div>
+          <div class="value" style="font-size: 28px; color: var(--success);">11,102</div>
+          <div class="label">审核通过</div>
+          <div class="trend" style="font-size: 11px; margin-top: 4px;">
+            <span class="trend-up">↑ 8.3%</span> 较上周
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon" style="background: var(--warning-bg); color: var(--warning); margin: 0 auto 10px;">⚠️</div>
+          <div class="value" style="font-size: 28px; color: var(--warning);">1,023</div>
+          <div class="label">待人工复核</div>
+          <div class="trend" style="font-size: 11px; margin-top: 4px;">
+            <span class="trend-down">↓ 3.2%</span> 较上周
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon" style="background: var(--danger-bg); color: var(--danger); margin: 0 auto 10px;">❌</div>
+          <div class="value" style="font-size: 28px; color: var(--danger);">333</div>
+          <div class="label">审核驳回</div>
+          <div class="trend" style="font-size: 11px; margin-top: 4px;">
+            <span class="trend-down">↓ 15.7%</span> 较上周
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon" style="background: var(--info-bg); color: var(--info); margin: 0 auto 10px;">⏱️</div>
+          <div class="value" style="font-size: 28px; color: var(--info);">1.23s</div>
+          <div class="label">平均耗时</div>
+          <div class="trend" style="font-size: 11px; margin-top: 4px;">
+            <span class="trend-up">↓ 0.15s</span> 较上周
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="chart-row">
+        <!-- Bar Chart: Daily Trend -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">日审核量趋势</span>
+            <div class="chart-period">
+              <button>近7天</button>
+              <button class="active">近30天</button>
+              <button>近90天</button>
+            </div>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-item">
+              <div class="bar-value">823</div>
+              <div class="bar" style="height: 60px;"></div>
+              <div class="bar-label">周一</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">956</div>
+              <div class="bar" style="height: 80px;"></div>
+              <div class="bar-label">周二</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">1,102</div>
+              <div class="bar" style="height: 100px;"></div>
+              <div class="bar-label">周三</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">878</div>
+              <div class="bar" style="height: 70px;"></div>
+              <div class="bar-label">周四</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">1,245</div>
+              <div class="bar" style="height: 110px;"></div>
+              <div class="bar-label">周五</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">623</div>
+              <div class="bar" style="height: 45px;"></div>
+              <div class="bar-label">周六</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-value">456</div>
+              <div class="bar" style="height: 30px;"></div>
+              <div class="bar-label">周日</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie Chart: Result Distribution -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">审核结果分布</span>
+          </div>
+          <div class="pie-chart-container">
+            <div class="pie-chart"></div>
+            <div class="pie-legend">
+              <div class="pie-legend-item">
+                <span class="dot" style="background: var(--success);"></span>
+                <span>通过</span>
+                <span class="value" style="color: var(--success);">89.1%</span>
+              </div>
+              <div class="pie-legend-item">
+                <span class="dot" style="background: var(--warning);"></span>
+                <span>待复核</span>
+                <span class="value" style="color: var(--warning);">8.2%</span>
+              </div>
+              <div class="pie-legend-item">
+                <span class="dot" style="background: var(--danger);"></span>
+                <span>驳回</span>
+                <span class="value" style="color: var(--danger);">2.7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Stats -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">各项目审核量</span>
+            <a href="projects.html" style="font-size: 12px;">查看详情 →</a>
+          </div>
+          <table class="table-stat">
+            <tbody>
+              <tr>
+                <td class="project"><a href="project_detail.html">企业认证审核</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 100%; background: var(--primary);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">5,623</td>
+                <td style="text-align: right; font-size: 12px; color: var(--success);">89.2%</td>
+              </tr>
+              <tr>
+                <td class="project"><a href="project_detail.html">合同文本审核</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 65%; background: var(--primary);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">3,412</td>
+                <td style="text-align: right; font-size: 12px; color: var(--success);">95.6%</td>
+              </tr>
+              <tr>
+                <td class="project"><a href="project_detail.html">资质文件审查</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 40%; background: var(--primary);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">2,156</td>
+                <td style="text-align: right; font-size: 12px; color: var(--warning);">68.2%</td>
+              </tr>
+              <tr>
+                <td class="project">其他项目</td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 22%; background: var(--primary);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">1,267</td>
+                <td style="text-align: right; font-size: 12px; color: var(--success);">91.3%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">驳回原因分布</span>
+          </div>
+          <table class="table-stat">
+            <tbody>
+              <tr>
+                <td class="project"><a href="rule_builder.html">营业执照核验失败</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 45%; background: var(--danger);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">156</td>
+                <td style="text-align: right; font-size: 12px;">46.8%</td>
+              </tr>
+              <tr>
+                <td class="project"><a href="rule_builder.html">法人身份验证失败</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 30%; background: var(--danger);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">98</td>
+                <td style="text-align: right; font-size: 12px;">29.4%</td>
+              </tr>
+              <tr>
+                <td class="project"><a href="rule_builder.html">企业经营异常</a></td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 15%; background: var(--danger);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">52</td>
+                <td style="text-align: right; font-size: 12px;">15.6%</td>
+              </tr>
+              <tr>
+                <td class="project">其他原因</td>
+                <td class="bar-cell">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 12%; background: var(--danger);"></div></div>
+                </td>
+                <td style="text-align: right; font-weight: 500;">27</td>
+                <td style="text-align: right; font-size: 12px;">8.1%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2024 SmartAudit 智核. 保留所有权利.</span>
+    <div class="footer-links">
+      <a href="#">帮助文档</a>
+      <a href="#">联系支持</a>
+      <a href="#">版本 v1.0.0</a>
+    </div>
+  </div>
+</body>
+</html>

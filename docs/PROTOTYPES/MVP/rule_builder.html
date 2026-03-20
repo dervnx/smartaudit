@@ -1,0 +1,286 @@
+<!-- SmartAudit MVP - 规则配置 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>规则配置 - SmartAudit MVP</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .rule-builder-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+    .rule-list { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .rule-list-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .rule-list-item { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: all 0.15s; }
+    .rule-list-item:hover { background: var(--bg); }
+    .rule-list-item.active { background: var(--primary-light); border-left: 3px solid var(--primary); }
+    .rule-list-item .name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+    .rule-list-item .meta { font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; }
+    .rule-editor { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .rule-editor-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .condition-row { display: grid; grid-template-columns: 1fr 120px 160px 40px; gap: 10px; align-items: center; padding: 10px 0; }
+    .condition-row .field-wrap { position: relative; }
+    .condition-group { border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fafafa; }
+    .condition-group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .logic-toggle { display: flex; background: var(--white); border-radius: 6px; padding: 2px; border: 1px solid var(--border); }
+    .logic-toggle button { padding: 4px 12px; font-size: 11px; border: none; background: transparent; cursor: pointer; border-radius: 4px; }
+    .logic-toggle button.active { background: var(--primary); color: #fff; }
+    .rule-preview { background: #f8f9fa; border-radius: 6px; padding: 12px; font-size: 12px; font-family: monospace; }
+    .operator-badge { display: inline-block; padding: 2px 8px; background: var(--info-bg); color: var(--info); border-radius: 4px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title"><span class="logo">🛡️</span> SmartAudit MVP</div>
+    <div class="header-right">
+      <div class="notification">🔔<span class="badge">3</span></div>
+      <div class="avatar">管</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="menu-group">
+        <div class="menu-group-title">工作区</div>
+        <a href="dashboard.html" class="menu-item">📊 工作台</a>
+        <a href="projects.html" class="menu-item">📁 项目管理</a>
+        <a href="audit.html" class="menu-item">📋 审核任务<span class="count warning">3</span></a>
+        <a href="task_review.html" class="menu-item">✅ 人工复核</a>
+        <a href="rule_builder.html" class="menu-item active">📐 规则配置</a>
+        <a href="statistics.html" class="menu-item">📈 数据统计</a>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="page-header">
+        <h1 class="page-title">规则配置</h1>
+        <div class="page-actions">
+          <select class="form-control" style="width: 180px;">
+            <option>企业认证审核 (BIZ_AUTH)</option>
+            <option>合同文本审核 (CONTRACT)</option>
+          </select>
+          <button class="btn btn-primary">+ 新建规则</button>
+        </div>
+      </div>
+
+      <div class="rule-builder-layout">
+        <!-- Left: Rule List -->
+        <div class="rule-list">
+          <div class="rule-list-header">
+            <span style="font-weight: 600; font-size: 13px;">规则列表</span>
+            <button class="btn btn-icon btn-sm">🔍</button>
+          </div>
+          <div class="rule-list-item active">
+            <div class="name">营业执照核验</div>
+            <div class="meta">
+              <span class="badge success">启用</span>
+              <span>企业认证审核</span>
+            </div>
+          </div>
+          <div class="rule-list-item">
+            <div class="name">法人身份验证</div>
+            <div class="meta">
+              <span class="badge success">启用</span>
+              <span>企业认证审核</span>
+            </div>
+          </div>
+          <div class="rule-list-item">
+            <div class="name">企业经营异常检测</div>
+            <div class="meta">
+              <span class="badge success">启用</span>
+              <span>企业认证审核</span>
+            </div>
+          </div>
+          <div class="rule-list-item">
+            <div class="name">注册地址验证</div>
+            <div class="meta">
+              <span class="badge warning">需复核</span>
+              <span>企业认证审核</span>
+            </div>
+          </div>
+          <div class="rule-list-item">
+            <div class="name">企业名称黑名单</div>
+            <div class="meta">
+              <span class="badge success">启用</span>
+              <span>企业认证审核</span>
+            </div>
+          </div>
+          <div class="rule-list-item">
+            <div class="name">合同条款合规性</div>
+            <div class="meta">
+              <span class="badge success">启用</span>
+              <span>合同文本审核</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Rule Editor -->
+        <div class="rule-editor">
+          <div class="rule-editor-header">
+            <div>
+              <span style="font-size: 16px; font-weight: 600;">营业执照核验</span>
+              <span class="badge success ml-2">启用</span>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-secondary btn-sm">禁用</button>
+              <button class="btn btn-primary btn-sm">保存规则</button>
+            </div>
+          </div>
+
+          <div style="padding: 20px;">
+            <div class="form-group">
+              <label>规则名称</label>
+              <input type="text" class="form-control" value="营业执照核验">
+            </div>
+
+            <div class="form-group">
+              <label>规则描述</label>
+              <input type="text" class="form-control" value="验证企业营业执照的真实性和有效性">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>结果类型</label>
+                <select class="form-control">
+                  <option>通过 / 驳回</option>
+                  <option>通过 / 复核 / 驳回</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>优先级</label>
+                <select class="form-control">
+                  <option>1 - 最高</option>
+                  <option selected>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 600; font-size: 14px;">条件配置</span>
+                <div class="logic-toggle">
+                  <button class="active">满足全部</button>
+                  <button>满足任一</button>
+                </div>
+              </div>
+
+              <div class="condition-group">
+                <div class="condition-group-header">
+                  <span style="font-size: 12px; font-weight: 500;">条件组 A</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">同时满足以下条件</span>
+                </div>
+
+                <div class="condition-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <select class="form-control">
+                      <option selected>营业执照号</option>
+                      <option>企业名称</option>
+                      <option>法人姓名</option>
+                      <option>注册地址</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select class="form-control">
+                      <option selected>不为空</option>
+                      <option>等于</option>
+                      <option>正则匹配</option>
+                    </select>
+                  </div>
+                  <div>
+                    <input type="text" class="form-control" placeholder="值" disabled>
+                  </div>
+                  <button class="btn btn-icon btn-sm">🗑️</button>
+                </div>
+
+                <div class="condition-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <select class="form-control">
+                      <option>营业执照号</option>
+                      <option selected>企业名称</option>
+                      <option>法人姓名</option>
+                      <option>注册地址</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select class="form-control">
+                      <option selected>正则匹配</option>
+                      <option>等于</option>
+                      <option>包含</option>
+                    </select>
+                  </div>
+                  <div>
+                    <input type="text" class="form-control" value="^[0-9A-Z]{18}$">
+                  </div>
+                  <button class="btn btn-icon btn-sm">🗑️</button>
+                </div>
+
+                <button class="btn btn-secondary btn-sm" style="margin-top: 8px;">+ 添加条件</button>
+              </div>
+
+              <div class="condition-group">
+                <div class="condition-group-header">
+                  <span style="font-size: 12px; font-weight: 500;">条件组 B</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">同时满足以下条件</span>
+                </div>
+
+                <div class="condition-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <select class="form-control">
+                      <option>营业执照号</option>
+                      <option>企业名称</option>
+                      <option selected>法人身份证</option>
+                      <option>注册地址</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select class="form-control">
+                      <option selected>身份证验证</option>
+                      <option>等于</option>
+                      <option>正则匹配</option>
+                    </select>
+                  </div>
+                  <div>
+                    <input type="text" class="form-control" placeholder="系统自动验证" disabled>
+                  </div>
+                  <button class="btn btn-icon btn-sm">🗑️</button>
+                </div>
+
+                <button class="btn btn-secondary btn-sm" style="margin-top: 8px;">+ 添加条件</button>
+              </div>
+
+              <button class="btn btn-secondary btn-sm">+ 添加条件组</button>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+              <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">规则执行结果</div>
+              <div class="rule-preview">
+                <span style="color: var(--primary);">营业执照核验</span> =
+                <span class="operator-badge">验证通过</span> → <span class="badge success">通过</span><br><br>
+                <span style="color: var(--primary);">营业执照核验</span> =
+                <span class="operator-badge">验证失败</span> → <span class="badge danger">驳回</span><br><br>
+                <span style="color: var(--primary);">营业执照核验</span> =
+                <span class="operator-badge">无法验证</span> → <span class="badge warning">需人工复核</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+              <a href="audit.html"><button class="btn btn-secondary">← 返回审核任务</button></a>
+              <a href="task_review.html"><button class="btn btn-primary" style="margin-left: 10px;">前往人工复核 →</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2024 SmartAudit 智核. 保留所有权利.</span>
+    <div class="footer-links">
+      <a href="#">帮助文档</a>
+      <a href="#">联系支持</a>
+      <a href="#">版本 v1.0.0</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -8,9 +8,6 @@
   <link rel="stylesheet" href="style.css">
   <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .filters { background: var(--white); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-end; }
-    .filters .form-group { margin-bottom: 0; }
-    .filters label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; display: block; }
     table td .project-name { font-weight: 500; }
     table td .project-code { font-size: 11px; color: var(--text-muted); }
     .action-links { display: flex; gap: 10px; }
@@ -23,18 +20,24 @@
 </head>
 <body>
   <div class="header">
-    <div class="header-title">SmartAudit MVP</div>
+    <div class="header-title"><span class="logo">🛡️</span> SmartAudit MVP</div>
     <div class="header-right">
+      <div class="notification">🔔<span class="badge">3</span></div>
       <div class="avatar">管</div>
     </div>
   </div>
 
   <div class="layout">
     <div class="sidebar">
-      <div class="menu-item">📊 工作台</div>
-      <div class="menu-item active">📁 项目管理</div>
-      <div class="menu-item">📋 审核任务</div>
-      <div class="menu-item">📈 数据统计</div>
+      <div class="menu-group">
+        <div class="menu-group-title">工作区</div>
+        <a href="dashboard.html" class="menu-item">📊 工作台</a>
+        <a href="projects.html" class="menu-item active">📁 项目管理</a>
+        <a href="audit.html" class="menu-item">📋 审核任务<span class="count warning">3</span></a>
+        <a href="task_review.html" class="menu-item">✅ 人工复核</a>
+        <a href="rule_builder.html" class="menu-item">📐 规则配置</a>
+        <a href="statistics.html" class="menu-item">📈 数据统计</a>
+      </div>
     </div>
 
     <div class="main">
@@ -43,7 +46,7 @@
         <button class="btn btn-primary" onclick="document.getElementById('createModal').style.display='flex'">+ 新建项目</button>
       </div>
 
-      <div class="filters">
+      <div class="filters-bar">
         <div class="form-group">
           <label>关键词搜索</label>
           <input type="text" class="form-control" placeholder="项目名称/代码" style="width: 160px;">
@@ -91,12 +94,12 @@
               <td><span class="project-code">BIZ_AUTH</span></td>
               <td><span class="badge info">混合模式</span></td>
               <td>456</td>
-              <td>82.3%</td>
+              <td><span class="text-success">82.3%</span></td>
               <td><span class="badge success">运行中</span></td>
               <td>2023-06-15</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">配置</a>
+                <a href="project_detail.html">详情</a>
+                <a href="rule_builder.html">规则</a>
               </td>
             </tr>
             <tr>
@@ -106,12 +109,12 @@
               <td><span class="project-code">CONTRACT</span></td>
               <td><span class="badge info">自动审核</span></td>
               <td>128</td>
-              <td>95.6%</td>
+              <td><span class="text-success">95.6%</span></td>
               <td><span class="badge success">运行中</span></td>
               <td>2023-08-20</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">配置</a>
+                <a href="project_detail.html">详情</a>
+                <a href="rule_builder.html">规则</a>
               </td>
             </tr>
             <tr>
@@ -121,23 +124,32 @@
               <td><span class="project-code">QUALIFY</span></td>
               <td><span class="badge info">人工审核</span></td>
               <td>32</td>
-              <td>68.2%</td>
+              <td><span class="text-warning">68.2%</span></td>
               <td><span class="badge warning">已暂停</span></td>
               <td>2023-09-10</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">启用</a>
+                <a href="project_detail.html">详情</a>
+                <a href="rule_builder.html">规则</a>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-info">共 3 个项目</div>
+        <div class="pagination-controls">
+          <button disabled>‹</button>
+          <button class="active">1</button>
+          <button disabled>›</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Create Project Modal -->
   <div class="modal-overlay" id="createModal" style="display: none;" onclick="if(event.target===this)this.style.display='none'">
-    <div class="modal" style="width: 520px;">
+    <div class="modal md">
       <div class="modal-header">
         <span class="modal-title">新建项目</span>
         <div class="modal-close" onclick="this.closest('.modal-overlay').style.display='none'">×</div>
@@ -145,11 +157,11 @@
 
       <div class="modal-form">
         <div class="form-group full">
-          <label>项目名称 <span style="color: var(--danger);">*</span></label>
+          <label>项目名称 <span class="required">*</span></label>
           <input type="text" class="form-control" placeholder="请输入项目名称">
         </div>
         <div class="form-group">
-          <label>项目代码 <span style="color: var(--danger);">*</span></label>
+          <label>项目代码 <span class="required">*</span></label>
           <input type="text" class="form-control" placeholder="如: biz_auth">
         </div>
         <div class="form-group">
@@ -191,6 +203,15 @@
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').style.display='none'">取消</button>
         <button class="btn btn-primary">创建项目</button>
       </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>© 2024 SmartAudit 智核. 保留所有权利.</span>
+    <div class="footer-links">
+      <a href="#">帮助文档</a>
+      <a href="#">联系支持</a>
+      <a href="#">版本 v1.0.0</a>
     </div>
   </div>
 </body>

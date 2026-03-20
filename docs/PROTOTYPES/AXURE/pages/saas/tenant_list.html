@@ -61,18 +61,18 @@
   <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div class="menu-item">📊 运营概览</div>
+      <div class="menu-item" onclick="window.location.href='dashboard.html'">📊 运营概览</div>
       <div class="menu-item active">🏢 租户管理</div>
-      <div class="menu-item">📋 版本管理</div>
-      <div class="menu-item">⚙️ 系统配置</div>
-      <div class="menu-item">📈 运营统计</div>
+      <div class="menu-item" onclick="window.location.href='version_list.html'">📋 版本管理</div>
+      <div class="menu-item" onclick="window.location.href='system_config.html'">⚙️ 系统配置</div>
+      <div class="menu-item" onclick="window.location.href='statistics.html'">📈 运营统计</div>
     </div>
 
     <!-- Content -->
     <div class="content">
       <div class="page-header">
         <h1 class="page-title">租户管理</h1>
-        <button class="btn-primary">+ 开通租户</button>
+        <button class="btn-primary" onclick="window.location.href='create_tenant.html'">+ 开通租户</button>
       </div>
 
       <!-- Filters -->
@@ -131,8 +131,8 @@
               <td><span class="status-badge active">活跃</span></td>
               <td>2025-01-15</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">编辑</a>
+                <a href="tenant_list.html">详情</a>
+                <a href="create_tenant.html">编辑</a>
                 <a href="#">禁用</a>
               </td>
             </tr>
@@ -145,8 +145,8 @@
               <td><span class="status-badge active">活跃</span></td>
               <td>2024-12-31</td>
               <td class="action-links">
-                <a href="#">详情</a>
-                <a href="#">编辑</a>
+                <a href="tenant_list.html">详情</a>
+                <a href="create_tenant.html">编辑</a>
                 <a href="#">禁用</a>
               </td>
             </tr>
@@ -159,7 +159,7 @@
               <td><span class="status-badge expired">到期</span></td>
               <td>2024-01-10</td>
               <td class="action-links">
-                <a href="#">详情</a>
+                <a href="tenant_list.html">详情</a>
                 <a href="#">续费</a>
               </td>
             </tr>

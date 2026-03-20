@@ -70,15 +70,15 @@
   <div class="main-container">
     <div class="sidebar">
       <div class="menu-item active">📊 工作台</div>
-      <div class="menu-item">📁 项目管理</div>
-      <div class="menu-item">📋 任务审核 <span class="badge">5</span></div>
-      <div class="menu-item">📈 统计报表</div>
+      <div class="menu-item" onclick="window.location.href='project_list.html'">📁 项目管理</div>
+      <div class="menu-item" onclick="window.location.href='task_audit.html'">📋 任务审核 <span class="badge">5</span></div>
+      <div class="menu-item" onclick="window.location.href='statistics.html'">📈 统计报表</div>
       <div class="menu-item">⚙️ 系统设置</div>
       <div style="border-top:1px solid #eee;margin:8px 0;"></div>
-      <div class="menu-item">👤 账户管理</div>
-      <div class="menu-item">🔗 第三方配置</div>
-      <div class="menu-item">📋 版本信息</div>
-      <div class="menu-item">💾 数据备份</div>
+      <div class="menu-item" onclick="window.location.href='account_management.html'">👤 账户管理</div>
+      <div class="menu-item" onclick="window.location.href='third_party_config.html'">🔗 第三方配置</div>
+      <div class="menu-item" onclick="window.location.href='version_info.html'">📋 版本信息</div>
+      <div class="menu-item" onclick="window.location.href='data_backup.html'">💾 数据备份</div>
     </div>
 
     <div class="content">
@@ -117,7 +117,7 @@
         <div class="card">
           <div class="card-header">
             <span class="card-title">最新审核任务</span>
-            <a href="#" class="card-link">查看全部 →</a>
+            <a href="task_audit.html" class="card-link">查看全部 →</a>
           </div>
           <table>
             <thead>
@@ -162,19 +162,19 @@
             <span class="card-title">快捷操作</span>
           </div>
           <div class="quick-actions">
-            <div class="quick-btn">
+            <div class="quick-btn" onclick="window.location.href='project_detail.html'">
               <div class="icon">📁</div>
               <div>新建项目</div>
             </div>
-            <div class="quick-btn">
+            <div class="quick-btn" onclick="window.location.href='task_audit.html'">
               <div class="icon">📋</div>
               <div>待审核任务</div>
             </div>
-            <div class="quick-btn">
+            <div class="quick-btn" onclick="window.location.href='statistics.html'">
               <div class="icon">📊</div>
               <div>查看报表</div>
             </div>
-            <div class="quick-btn">
+            <div class="quick-btn" onclick="window.location.href='rule_builder.html'">
               <div class="icon">⚙️</div>
               <div>规则配置</div>
             </div>
