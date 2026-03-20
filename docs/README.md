@@ -21,8 +21,6 @@ docs/
 ├── SPECS/                        # 技术规格文档
 │   ├── SYSTEM/
 │   │   └── system_architecture.md      # 系统架构设计
-│   ├── TENANT/
-│   │   └── tenant_db.md               # 租户系统数据库设计
 │   ├── TESTING/
 │   │   └── testing_standard.md        # 测试规范与测试用例
 │   └── DEPLOY/
@@ -55,10 +53,15 @@ docs/
 │   └── REDIS_DESIGN.md           # Redis 设计
 │
 ├── PROTOTYPES/                   # 原型设计
-│   ├── SAAS/
-│   │   └── prototype_saas.md          # SaaS 管理平台原型
-│   └── TENANT/
-│       └── prototype_tenant.md         # 租户系统原型
+│   ├── AXURE/                   # Axure 可导入原型
+│   │   ├── README.md
+│   │   ├── _masters/             # 母版 (header/sidebar/footer)
+│   │   ├── _data/                # 共享样式
+│   │   └── pages/
+│   │       ├── saas/             # SaaS 管理平台页面
+│   │       └── tenant/           # 租户系统页面
+│   └── MVP/                     # 最小化 MVP 原型
+│       └── README.md
 │
 └── BID_DOCUMENTATION/
     └── smartaudit_bid_document.md      # 投标技术文档
@@ -141,13 +144,13 @@ docs/
 
 ### 技术规格
 - [系统架构](./SPECS/SYSTEM/system_architecture.md)
-- [租户数据库设计](./SPECS/TENANT/tenant_db.md)
+- [租户数据库设计](./TENANT/TENANT_DB.md)
 - [测试规范](./SPECS/TESTING/testing_standard.md)
 - [部署手册](./SPECS/DEPLOY/deployment_detailed.md)
 
 ### 原型设计
-- [SaaS 管理平台原型](./PROTOTYPES/SAAS/prototype_saas.md)
-- [租户系统原型](./PROTOTYPES/TENANT/prototype_tenant.md)
+- [Axure 原型](./PROTOTYPES/AXURE/README.md)
+- [MVP 原型](./PROTOTYPES/MVP/README.md)
 
 ### 投标文档
 - [投标技术文档](./BID_DOCUMENTATION/smartaudit_bid_document.md)
