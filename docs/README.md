@@ -27,6 +27,7 @@ docs/
 │       └── deployment_detailed.md      # 部署详细操作手册
 │
 ├── SAAS/                         # SaaS 管理平台文档
+│   ├── SAAS_ADMIN_PANEL.md      # SaaS 管理后台
 │   ├── SAAS_API.md               # SaaS API 规范
 │   ├── SAAS_SYSTEM.md            # SaaS 系统设计
 │   ├── SAAS_DB.md                # SaaS 数据库设计
