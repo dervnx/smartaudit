@@ -114,7 +114,7 @@ API网关层: Nginx / API Gateway
 
 **技术规格**
 - [系统架构设计](docs/SPECS/SYSTEM/system_architecture.md)
-- [租户数据库设计](docs/SPECS/TENANT/tenant_db.md)
+- [租户数据库设计](docs/TENANT/TENANT_DB.md)
 - [测试规范](docs/SPECS/TESTING/testing_standard.md)
 - [部署详细手册](docs/SPECS/DEPLOY/deployment_detailed.md)
 
