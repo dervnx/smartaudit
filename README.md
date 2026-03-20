@@ -100,11 +100,30 @@ API网关层: Nginx / API Gateway
 | 文件存储 | MinIO / S3 / OSS |
 | 定时任务 | APScheduler + Celery Beat |
 
-## 开发指南
+## 文档体系
 
-详细产品需求文档请参阅 [PRD.md](./PRD.md)
+详细文档请参阅 [docs/README.md](docs/README.md)
 
-详细技术规范请参阅 [TECH-SPEC.md](./TECH-SPEC.md)
+### 快速链接
+
+**开发规范**
+- [Python 代码规范](docs/STANDARDS/PYTHON/python_code_standard.md)
+- [React 代码规范](docs/STANDARDS/REACT/react_code_standard.md)
+- [SQL 规范](docs/STANDARDS/DB/sql_standard.md)
+- [API 设计规范](docs/STANDARDS/API/api_design_standard.md)
+
+**技术规格**
+- [系统架构设计](docs/SPECS/SYSTEM/system_architecture.md)
+- [租户数据库设计](docs/SPECS/TENANT/tenant_db.md)
+- [测试规范](docs/SPECS/TESTING/testing_standard.md)
+- [部署详细手册](docs/SPECS/DEPLOY/deployment_detailed.md)
+
+**原型设计**
+- [SaaS 管理平台原型](docs/PROTOTYPES/SAAS/prototype_saas.md)
+- [租户系统原型](docs/PROTOTYPES/TENANT/prototype_tenant.md)
+
+**投标文档**
+- [投标技术文档](docs/BID_DOCUMENTATION/smartaudit_bid_document.md)
 
 ### 环境要求
 

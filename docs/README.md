@@ -1,51 +1,45 @@
-# 智核 SmartAudit 文档体系
+# SmartAudit 文档体系
 
 ## 文档结构
 
 ```
 docs/
-├── README.md                    # 文档总览
+├── README.md                     # 文档总览
 │
-├── PRD/                        # 产品需求文档
-│   ├── OVERVIEW.md            # 产品概述与愿景
-│   ├── FUNCTION_MAP.md        # 功能拆解地图
-│   ├── SAAS_ADMIN_PRD.md      # SaaS后台需求
-│   ├── TENANT_ADMIN_PRD.md    # 租户后台需求
-│   └── VERSION_PLAN.md         # 版本规划
+├── STANDARDS/                    # 代码与设计规范
+│   ├── PYTHON/
+│   │   └── python_code_standard.md    # Python 代码规范
+│   ├── REACT/
+│   │   └── react_code_standard.md     # React 代码规范
+│   ├── CSS/
+│   │   └── css_standard.md            # CSS 样式规范
+│   ├── DB/
+│   │   └── sql_standard.md            # SQL 规范（PostgreSQL/MySQL）
+│   └── API/
+│       └── api_design_standard.md     # API 设计规范
 │
-├── SAAS/                       # SaaS 服务端设计
-│   ├── SAAS_SYSTEM.md        # SaaS 系统架构
-│   ├── SAAS_DB.md            # SaaS 数据库设计
-│   ├── SAAS_API.md           # SaaS API 规范
-│   ├── SAAS_ADMIN_PANEL.md   # SaaS 管理后台
-│   └── SAAS_DEPLOY.md        # SaaS 部署方案
+├── SPECS/                        # 技术规格文档
+│   ├── SYSTEM/
+│   │   └── system_architecture.md      # 系统架构设计
+│   ├── TENANT/
+│   │   ├── tenant_db.md               # 租户系统数据库设计
+│   │   └── tenant_api.md              # 租户系统 API 设计
+│   ├── TESTING/
+│   │   └── testing_standard.md        # 测试规范与测试用例
+│   └── DEPLOY/
+│       └── deployment_detailed.md      # 部署详细操作手册
 │
-├── TENANT/                    # 租户服务端设计
-│   ├── TENANT_SYSTEM.md      # 租户系统架构
-│   ├── TENANT_DB.md          # 租户数据库设计
-│   ├── TENANT_API.md         # 租户 API 规范
-│   ├── TENANT_DEPLOY.md      # 租户部署方案
-│   ├── TENANT_BACKUP.md      # 备份管理系统
-│   └── TENANT_VERSION.md     # 版本管理系统
+├── PROTOTYPES/                   # 原型设计
+│   ├── SAAS/
+│   │   └── prototype_saas.md          # SaaS 管理平台原型
+│   └── TENANT/
+│       └── prototype_tenant.md         # 租户系统原型
 │
-├── SHARED/                    # 共享设计
-│   ├── COMMON_TYPES.md        # 公共数据类型
-│   ├── AUTH_DESIGN.md        # 认证授权设计
-│   ├── REDIS_DESIGN.md       # Redis 缓存与队列
-│   ├── COMMON_SCHEMAS.md     # 公共 Schema 定义
-│   └── ERROR_CODES.md        # 错误码规范
-│
-├── FRONTEND/                  # 前端开发规范
-│   ├── COMMON_SPEC.md        # 公共开发规范
-│   ├── PC_WEB_SPEC.md       # PC Web 规范
-│   ├── MOBILE_SPEC.md       # 移动端 H5 规范
-│   └── MINI_PROGRAM_SPEC.md # 小程序规范
-│
-└── DEPLOY/                    # 部署相关
-    ├── DOCKER_COMPOSE.md    # Docker Compose 部署
-    ├── KUBERNETES.md        # Kubernetes 部署
-    └── ENV_TEMPLATE.md       # 环境变量模板
+└── BID_DOCUMENTATION/
+    └── smartaudit_bid_document.md      # 投标技术文档
 ```
+
+---
 
 ## 系统架构概览
 
@@ -53,47 +47,101 @@ docs/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         SmartAudit                               │
+│                         SmartAudit 智核                          │
 ├───────────────────────────┬─────────────────────────────────────┤
 │                           │                                      │
 │      SaaS 管理平台         │         租户管理系统                 │
 │   (平台运营方使用)          │      (各租户独立使用)                │
 │                           │                                      │
 │  ┌─────────────────────┐  │  ┌─────────────────────────────┐   │
-│  │ - 租户开通/管理       │  │  │ - 项目管理                  │   │
-│  │ - 版本发布管理        │  │  │ - 规则引擎                  │   │
-│  │ - 系统升级管理        │  │  │ - 任务审核                  │   │
-│  │ - 全局配置           │  │  │ - 三方接口                  │   │
-│  │ - 运营统计           │  │  │ - 数据统计                  │   │
-│  └─────────────────────┘  │  │ - 备份管理                  │   │
-│                           │  │ - 版本管理 (独立部署)         │   │
+│  │ - 租户开通/管理      │  │  │ - 项目管理                   │   │
+│  │ - 版本发布管理       │  │  │ - 规则引擎                   │   │
+│  │ - 升级推送          │  │  │ - 任务审核                   │   │
+│  │ - 独立部署版本生成   │  │  │ - 三方接口                   │   │
+│  │ - 全局配置          │  │  │ - 数据统计                   │   │
+│  │ - 运营统计          │  │  │ - 账户权限                   │   │
+│  └─────────────────────┘  │  │ - 版本管理 (独立部署)         │   │
+│                           │  │ - 备份管理 (独立部署)         │   │
 │                           │  └─────────────────────────────┘   │
 │                           │                                      │
 └───────────────────────────┴─────────────────────────────────────┘
 ```
 
-### 部署模式
-
-| 模式 | 说明 | 适用场景 |
-|------|------|----------|
-| SaaS | 平台统一托管，多租户共享 | 中小企业 |
-| 独立部署 | 租户独立服务器 | 大型企业/政府 |
+---
 
 ## 技术栈
 
 | 层级 | 技术选型 |
 |------|----------|
-| 前端 | React 18 + Tailwind CSS + Vite + TypeScript |
-| 后端 | Python 3.11 + FastAPI + SQLAlchemy 2.x |
-| 数据库 | PostgreSQL 15+ |
-| 缓存/队列 | Redis 7+ (Celery) |
+| 前端 | React 18 + TypeScript + Vite + Ant Design |
+| 后端 | Python 3.11 + FastAPI + SQLAlchemy 2.x + Pydantic 2.x |
+| 数据库 | PostgreSQL 15+ / MySQL 8.0 |
+| 缓存/队列 | Redis 7+ + Celery |
 | 文件存储 | MinIO / S3 / OSS |
+| 容器化 | Docker + Docker Compose |
+
+---
+
+## 核心规范
+
+### 1. 命名规范
+
+- **后端字段**：snake_case 风格
+  - `created_at`、`updated_at`、`is_deleted`
+- **前端字段**：camelCase 风格（API 响应自动转换）
+- **数据库表**：snake_case 复数形式
+  - `biz_accounts`、`biz_projects`
+
+### 2. 软删除机制
+
+所有业务表均包含 `is_deleted` 字段：
+- `is_deleted = 0`：正常数据
+- `is_deleted = 1`：已删除
+
+### 3. 多租户隔离
+
+- **SaaS 模式**：行级隔离，通过 `tenant_id` 字段隔离
+- **独立部署**：独立数据库，完全隔离
+
+---
 
 ## 快速导航
 
-- [产品需求总览](./PRD/OVERVIEW.md)
-- [SaaS 管理平台设计](./SAAS/SAAS_SYSTEM.md)
-- [租户管理系统设计](./TENANT/TENANT_SYSTEM.md)
-- [Redis 缓存与队列设计](./SHARED/REDIS_DESIGN.md)
-- [前端开发规范](./FRONTEND/COMMON_SPEC.md)
-- [部署方案](./DEPLOY/DOCKER_COMPOSE.md)
+### 开发规范
+- [Python 代码规范](./STANDARDS/PYTHON/python_code_standard.md)
+- [React 代码规范](./STANDARDS/REACT/react_code_standard.md)
+- [CSS 样式规范](./STANDARDS/CSS/css_standard.md)
+- [SQL 规范](./STANDARDS/DB/sql_standard.md)
+- [API 设计规范](./STANDARDS/API/api_design_standard.md)
+
+### 技术规格
+- [系统架构](./SPECS/SYSTEM/system_architecture.md)
+- [租户数据库设计](./SPECS/TENANT/tenant_db.md)
+- [测试规范](./SPECS/TESTING/testing_standard.md)
+- [部署手册](./SPECS/DEPLOY/deployment_detailed.md)
+
+### 原型设计
+- [SaaS 管理平台原型](./PROTOTYPES/SAAS/prototype_saas.md)
+- [租户系统原型](./PROTOTYPES/TENANT/prototype_tenant.md)
+
+### 投标文档
+- [投标技术文档](./BID_DOCUMENTATION/smartaudit_bid_document.md)
+
+---
+
+## 版本说明
+
+| 版本 | 日期 | 说明 |
+|------|------|------|
+| V1.0 | 2026-03-20 | 初始版本，完善文档结构 |
+
+---
+
+## 文档维护
+
+本文档体系按照以下原则维护：
+
+1. **一致性**：所有技术文档遵循统一的命名规范和编码风格
+2. **可操作性**：部署文档包含详细的命令和步骤
+3. **完整性**：覆盖开发、测试、部署、运维全流程
+4. **可追溯性**：重要决策记录变更历史
